@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "shift_scheduling_agent": "./agent/implementation.py:compiled_agent"
+  },
+  "env": ".env",
+  "python_version": "3.11"
+}
