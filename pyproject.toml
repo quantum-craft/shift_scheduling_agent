@@ -1,0 +1,22 @@
+[project]
+name = "shift-scheduling-agent"
+version = "0.1.0"
+description = "A Mayo agent to help you to schedule shifts."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain-anthropic>=0.3.12",
+    "langchain-openai>=0.3.14",
+    "langgraph>=0.3.31",
+    "langgraph-cli[inmem]>=0.2.5",
+    "langgraph-gen>=0.0.6",
+    "typing-extensions>=4.13.2",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agent*"]

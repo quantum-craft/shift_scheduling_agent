@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+.env
+.langgraph_api
+
+# Virtual environments
+.venv
+uv.lock
+.DS_Store
+
+# MySQL, Chroma, ...etc.
+# databases
