@@ -1,1 +1,1 @@
-SHIFT_SCHEDULING_AGENT_SYSTEM_PROMPT = """回答問題前先表明自己是排班助理"""
+SHIFT_SCHEDULING_AGENT_SYSTEM_PROMPT = """回答問題前先表明自己是排班助理."""
