@@ -1,5 +1,7 @@
 from ortools.sat.python import cp_model
 from datetime import datetime
+from agent.cp_sat_model.shift import Shift
+from agent.cp_sat_model.worker import Worker
 
 
 class SolverManager:
@@ -7,12 +9,12 @@ class SolverManager:
 
     days: list[datetime] = None
     all_days: range = None
-    shifts: list[int] = None
+    shifts: list[Shift] = None
     all_shifts: range = None
-    workers: list[int] = None
+    workers: list[Worker] = None
     all_workers: range = None
 
-    def check_solver_status_and_init(self) -> tuple[str, bool]:
+    def check_solver_status(self) -> tuple[str, bool]:
         if self.days is None:
             return "Days not set, get more data from the user.", False
 
@@ -21,6 +23,16 @@ class SolverManager:
 
         if self.workers is None:
             return "Workers not set, get more data from the user.", False
+
+        return "All data is set.", True
+
+    def init(self) -> tuple[str, bool]:
+        """Initialize the solver and model"""
+
+        (status, status_ok) = self.check_solver_status()
+
+        if not status_ok:
+            return status, False
 
         self.model = cp_model.CpModel()
         self.solver = cp_model.CpSolver()
@@ -56,13 +68,13 @@ class SolverManager:
         self.days = days
         self.all_days = range(len(days))
 
-    def set_shifts(self, shifts: list[int]):
+    def set_shifts(self, shifts: list[Shift]):
         """Set the shifts for the scheduling problem"""
 
         self.shifts = shifts
         self.all_shifts = range(len(shifts))
 
-    def set_workers(self, workers: list[int]):
+    def set_workers(self, workers: list[Worker]):
         """Set the workers for the scheduling problem"""
 
         self.workers = workers
