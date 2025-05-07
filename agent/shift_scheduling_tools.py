@@ -83,12 +83,28 @@ def setup_date_interval_for_shift_scheduling(
         ]
     )
 
+    return "排班工具的日期區間設定成功."
+
+
+@tool
+def initialize_ortools() -> str:
+    """
+    初始化並啟動排班最佳化工具(OR-Tools)。
+
+    此工具函式會呼叫 `solver_manager.init()` 來完成排班最佳化工具的初始化動作，
+    並回傳初始化過程中的狀態字串。
+
+    回傳:
+        str: 表示排班最佳化工具初始化結果的狀態字串（例如 始化成功 或 錯誤訊息）。
+    """
+
     status, init_ok = solver_manager.init()
 
-    return "排班工具的日期區間設定成功."
+    return status
 
 
 shift_scheduling_tool_list = [
     get_current_datetime,
     setup_date_interval_for_shift_scheduling,
+    initialize_ortools,
 ]

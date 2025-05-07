@@ -16,15 +16,27 @@ class SolverManager:
 
     def check_solver_status(self) -> tuple[str, bool]:
         if self.days is None:
-            return "Days not set, get more data from the user.", False
+            return (
+                "排班最佳化工具(OR-Tools)的日期區間(Days)沒有設置, 請詢問使用者更多的資訊.",
+                False,
+            )
 
         if self.shifts is None:
-            return "Shifts not set, get more data from the user.", False
+            return (
+                "排班最佳化工具(OR-Tools)的班次(Shifts)沒有設置, 請詢問使用者更多的資訊.",
+                False,
+            )
 
         if self.workers is None:
-            return "Workers not set, get more data from the user.", False
+            return (
+                "排班最佳化工具(OR-Tools)的員工(Workers)沒有設置, 請詢問使用者更多的資訊.",
+                False,
+            )
 
-        return "All data is set.", True
+        return (
+            "排班最佳化工具(OR-Tools)的資料(Days, Shifts, and Workers)都設置成功",
+            True,
+        )
 
     def init(self) -> tuple[str, bool]:
         """Initialize the solver and model"""
@@ -45,7 +57,10 @@ class SolverManager:
                         f"shift_w{w}_d{d}_s{s}"
                     )
 
-        return "Solver and model initialized successfully.", True
+        return (
+            "排班最佳化工具(OR-Tools)的model和solver初始化成功(initialization successful).",
+            True,
+        )
 
     def clear(self):
         """Clear current model and solution state"""
