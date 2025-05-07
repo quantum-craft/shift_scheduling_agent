@@ -63,19 +63,19 @@ class SolverManager:
         self.model = cp_model.CpModel()
 
     def set_days(self, days: list[datetime]):
-        """Set the days for the scheduling problem"""
+        """Set the days for the scheduling tool"""
 
         self.days = days
         self.all_days = range(len(days))
 
     def set_shifts(self, shifts: list[Shift]):
-        """Set the shifts for the scheduling problem"""
+        """Set the shifts for the scheduling tool"""
 
         self.shifts = shifts
         self.all_shifts = range(len(shifts))
 
     def set_workers(self, workers: list[Worker]):
-        """Set the workers for the scheduling problem"""
+        """Set the workers for the scheduling tool"""
 
         self.workers = workers
         self.all_workers = range(len(workers))
