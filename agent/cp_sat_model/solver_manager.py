@@ -8,11 +8,8 @@ class SolverManager:
     """Manages OR-Tools solver operations and state"""
 
     days: list[datetime] = None
-    all_days: range = None
     shifts: list[Shift] = None
-    all_shifts: range = None
     workers: list[Worker] = None
-    all_workers: range = None
 
     def check_solver_status(self) -> tuple[str, bool]:
         if self.days is None:
@@ -50,9 +47,9 @@ class SolverManager:
         self.solver = cp_model.CpSolver()
 
         self.shift_schedule = {}
-        for w in self.all_workers:
-            for d in self.all_days:
-                for s in self.all_shifts:
+        for w in range(len(self.workers)):
+            for d in range(len(self.days)):
+                for s in range(len(self.shifts)):
                     self.shift_schedule[(w, d, s)] = self.model.new_bool_var(
                         f"shift_w{w}_d{d}_s{s}"
                     )
@@ -66,10 +63,6 @@ class SolverManager:
         """Clear current model and solution state"""
         self.shift_schedule = {}
 
-        self.all_days = None
-        self.all_shifts = None
-        self.all_workers = None
-
         self.days = None
         self.shifts = None
         self.workers = None
@@ -79,18 +72,12 @@ class SolverManager:
 
     def set_days(self, days: list[datetime]):
         """Set the days for the scheduling tool"""
-
         self.days = days
-        self.all_days = range(len(days))
 
     def set_shifts(self, shifts: list[Shift]):
         """Set the shifts for the scheduling tool"""
-
         self.shifts = shifts
-        self.all_shifts = range(len(shifts))
 
     def set_workers(self, workers: list[Worker]):
         """Set the workers for the scheduling tool"""
-
         self.workers = workers
-        self.all_workers = range(len(workers))
