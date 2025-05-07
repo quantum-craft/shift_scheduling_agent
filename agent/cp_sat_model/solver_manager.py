@@ -76,6 +76,6 @@ class SolverManager:
             )
 
         return (
-            "排班最佳化工具(OR-Tools)的資料(Days, Shifts, and Workers)都設置成功",
+            "排班最佳化工具(OR-Tools)的資料(Workers, Days, and Shifts)都設置成功",
             True,
         )

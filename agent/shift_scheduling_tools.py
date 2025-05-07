@@ -15,10 +15,10 @@ solver_manager = SolverManager()
 @tool
 def get_current_datetime() -> datetime:
     """
-    獲取當前的日期和時間.
+    取得並回傳當前日期時間，供後續排程運算使用。
 
-    returns:
-        datetime: 當前的日期和時間.
+    Returns:
+        datetime: 目前的日期與時間。
     """
 
     return datetime.now()
@@ -26,24 +26,19 @@ def get_current_datetime() -> datetime:
 
 @tool
 def setup_date_interval_for_shift_scheduling(
-    start_date_time: Annotated[datetime, "班表開始的日期時間"],
-    end_date_time: Annotated[datetime, "班表結束的日期時間"],
+    start_date_time: Annotated[datetime, "排班表的起始日期時間"],
+    end_date_time: Annotated[datetime, "排班表的結束日期時間"],
 ) -> str:
     """
-    說明：
-        必須先用工具 get_current_datetime() 取得當前的日期和時間，
-        接著據此推算出排班表的起始與結束日期。
+    必須先用工具 get_current_datetime 取得當前的日期和時間，
+    接著根據推斷出的開始與結束日期時間，設定排班最佳化工具的日期區間。
 
-    功能：
-        根據 start_date_time 與 end_date_time, 自動產生這段期間內每一天的時間區間,
-        設定好排班工具後可用於後續排班設定。
+    Args:
+        start_date_time (datetime): 排班表的起始日期時間。
+        end_date_time (datetime): 排班表的結束日期時間。
 
-    參數：
-        start_date_time (datetime)：排班表的起始日期與時間。
-        end_date_time (datetime)：排班表的結束日期與時間。
-
-    回傳值：
-        str: 設定結果狀態。若成功，回傳 "設定成功";若失敗，回傳錯誤訊息。
+    Returns:
+        str: 操作結果訊息，例如 "日期區間設定成功" 或錯誤訊息。
     """
 
     ret_days = []
@@ -54,7 +49,18 @@ def setup_date_interval_for_shift_scheduling(
 
     solver_manager.set_days(ret_days)
 
-    # TODO: refactor mock workers and shifts
+    return "排班最佳化工具的日期區間設定成功."
+
+
+@tool
+def setup_workers_for_shift_scheduling() -> str:
+    """
+    註冊員工清單至排班最佳化工具，以便後續排程使用。
+
+    Returns:
+        str: 操作結果訊息，例如 "員工設定成功" 或錯誤訊息。
+    """
+
     solver_manager.set_workers(
         [
             Worker(worker_id="張三"),
@@ -63,6 +69,19 @@ def setup_date_interval_for_shift_scheduling(
             Worker(worker_id="趙六"),
         ]
     )
+
+    return "排班最佳化工具的員工設定成功."
+
+
+@tool
+def setup_shifts_for_shift_scheduling() -> str:
+    """
+    註冊班次清單至排班最佳化工具，以便後續排程使用。
+
+    Returns:
+        str: 操作結果訊息，例如 "班次設定成功" 或錯誤訊息。
+    """
+
     solver_manager.set_shifts(
         [
             Shift(
@@ -83,19 +102,16 @@ def setup_date_interval_for_shift_scheduling(
         ]
     )
 
-    return "排班工具的日期區間設定成功."
+    return "排班最佳化工具的班次設定成功."
 
 
 @tool
 def initialize_ortools() -> str:
     """
-    初始化並啟動排班最佳化工具(OR-Tools)。
+    初始化排班最佳化工具並回傳狀態結果。
 
-    此工具函式會呼叫 `solver_manager.init()` 來完成排班最佳化工具的初始化動作，
-    並回傳初始化過程中的狀態字串。
-
-    回傳:
-        str: 表示排班最佳化工具初始化結果的狀態字串（例如 始化成功 或 錯誤訊息）。
+    Returns:
+        str: 初始設定結果訊息，例如 "初始化成功" 或錯誤訊息。
     """
 
     status, init_ok = solver_manager.init()
@@ -106,5 +122,7 @@ def initialize_ortools() -> str:
 shift_scheduling_tool_list = [
     get_current_datetime,
     setup_date_interval_for_shift_scheduling,
+    setup_workers_for_shift_scheduling,
+    setup_shifts_for_shift_scheduling,
     initialize_ortools,
 ]
