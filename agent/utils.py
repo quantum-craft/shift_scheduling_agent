@@ -9,7 +9,7 @@ def get_model_with_shift_scheduling_tool(model_name: str):
     model = get_model(model_name)
 
     model = model.bind_tools(shift_scheduling_tool_list, parallel_tool_calls=False)
-    # model = model.bind_tools(day_off_tool_list + [{"type": "web_search_preview"}])
+    # model = model.bind_tools(shift_scheduling_tool_list + [{"type": "web_search_preview"}])
 
     return model
 
