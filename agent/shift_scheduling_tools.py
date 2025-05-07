@@ -25,15 +25,25 @@ def get_current_datetime() -> datetime:
 
 
 @tool
-def get_datetime_table(
-    start_date_time: Annotated[datetime, "班表開始的日期."],
-    end_date_time: Annotated[datetime, "班表結束的日期."],
-) -> list[datetime]:
+def setup_date_interval_for_shift_scheduling(
+    start_date_time: Annotated[datetime, "班表開始的日期時間"],
+    end_date_time: Annotated[datetime, "班表結束的日期時間"],
+) -> str:
     """
-    在知道班表的開始和結束日期後, 獲取其間所有的日期和時間.
+    說明：
+        必須先用工具 get_current_datetime() 取得當前的日期和時間，
+        接著據此推算出排班表的起始與結束日期。
 
-    returns:
-        list[datetime]: 其間所有的日期和時間.
+    功能：
+        根據 start_date_time 與 end_date_time, 自動產生這段期間內每一天的時間區間,
+        設定好排班工具後可用於後續排班設定。
+
+    參數：
+        start_date_time (datetime)：排班表的起始日期與時間。
+        end_date_time (datetime)：排班表的結束日期與時間。
+
+    回傳值：
+        str: 設定結果狀態。若成功，回傳 "設定成功";若失敗，回傳錯誤訊息。
     """
 
     ret_days = []
@@ -43,6 +53,8 @@ def get_datetime_table(
         current += timedelta(days=1)
 
     solver_manager.set_days(ret_days)
+
+    # TODO: refactor mock workers and shifts
     solver_manager.set_workers(
         [
             Worker(worker_id="張三"),
@@ -72,9 +84,11 @@ def get_datetime_table(
     )
 
     status, init_ok = solver_manager.init()
-    print(status)
 
-    return ret_days
+    return "排班工具的日期區間設定成功."
 
 
-shift_scheduling_tool_list = [get_current_datetime, get_datetime_table]
+shift_scheduling_tool_list = [
+    get_current_datetime,
+    setup_date_interval_for_shift_scheduling,
+]
