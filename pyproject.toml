@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "langchain-anthropic>=0.3.12",
     "langchain-openai>=0.3.14",
-    "langgraph>=0.3.31",
+    "langgraph>=0.3.34",
     "langgraph-cli[inmem]>=0.2.5",
     "langgraph-gen>=0.0.6",
     "ortools>=9.12.4544",
