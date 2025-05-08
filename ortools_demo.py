@@ -15,7 +15,6 @@ for n in all_nurses:
         for s in all_shifts:
             shifts[(n, d, s)] = model.new_bool_var(f"shift_n{n}_d{d}_s{s}")
 
-
 for d in all_days:
     for s in all_shifts:
         model.add_exactly_one(shifts[(n, d, s)] for n in all_nurses)
@@ -23,6 +22,8 @@ for d in all_days:
 for n in all_nurses:
     for d in all_days:
         model.add_at_most_one(shifts[(n, d, s)] for s in all_shifts)
+
+# ================= Above DONE ======================
 
 min_shifts_per_nurse = (num_shifts * num_days) // num_nurses
 if num_shifts * num_days % num_nurses == 0:

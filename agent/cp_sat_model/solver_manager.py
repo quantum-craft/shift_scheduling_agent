@@ -28,6 +28,20 @@ class SolverManager:
                         f"shift_w{w}_d{d}_s{s}"
                     )
 
+        # 某一'天'的某一'班次' -> 只能有一位'員工'上班
+        for d in range(len(self.days)):
+            for s in range(len(self.shifts)):
+                self.model.add_exactly_one(
+                    self.shift_schedule[(w, d, s)] for w in range(len(self.workers))
+                )
+
+        # 某一'員工'在某一'天' -> 只能上一個'班次'
+        for w in range(len(self.workers)):
+            for d in range(len(self.days)):
+                self.model.add_at_most_one(
+                    self.shift_schedule[(w, d, s)] for s in range(len(self.shifts))
+                )
+
         return (
             "排班最佳化工具(OR-Tools)的model和solver初始化成功(initialization successful).",
             True,
