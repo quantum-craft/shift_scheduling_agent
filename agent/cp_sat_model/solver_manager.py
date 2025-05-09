@@ -57,7 +57,7 @@ class SolverManager:
         else:
             max_shifts_per_worker = min_shifts_per_worker + 1
 
-        for n in range(num_workers):
+        for w in range(num_workers):
             shifts_worked = []
             for d in range(num_days):
                 for s in range(num_shifts):

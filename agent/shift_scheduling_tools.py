@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 from agent.cp_sat_model.solver_manager import SolverManager
 from agent.cp_sat_model.worker import Worker
 from agent.cp_sat_model.shift import Shift
+from ortools.sat.python import cp_model
+from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
 
 
 solver_manager = SolverManager()
@@ -135,10 +137,27 @@ def execute_ortools_scheduling_solver() -> str:
              表示求解是否成功或失敗，以及相關訊息。
     """
 
-    # status = solver_manager.solver.solve(solver_manager.model, solution_printer)
-    status = solver_manager.solver.solve(solver_manager.model)
+    # Display the first five solutions.
+    solution_printer = WorkersPartialSolutionPrinter(
+        solver_manager.shift_schedule,
+        len(solver_manager.workers),
+        len(solver_manager.days),
+        len(solver_manager.shifts),
+        solution_limit=5,
+    )
 
-    return status
+    status = solver_manager.solver.solve(
+        solver_manager.model, solution_callback=solution_printer
+    )
+
+    if status == cp_model.OPTIMAL:
+        return "OPTIMAL"
+    elif status == cp_model.FEASIBLE:
+        return "FEASIBLE"
+    elif status == cp_model.INFEASIBLE:
+        return "INFEASIBLE"
+    else:
+        return status
 
 
 shift_scheduling_tool_list = [
