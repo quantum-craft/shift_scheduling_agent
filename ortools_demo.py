@@ -1,51 +1,5 @@
 from ortools.sat.python import cp_model
 
-num_nurses = 4
-num_shifts = 3
-num_days = 3
-all_nurses = range(num_nurses)
-all_shifts = range(num_shifts)
-all_days = range(num_days)
-
-model = cp_model.CpModel()
-
-shifts = {}
-for n in all_nurses:
-    for d in all_days:
-        for s in all_shifts:
-            shifts[(n, d, s)] = model.new_bool_var(f"shift_n{n}_d{d}_s{s}")
-
-for d in all_days:
-    for s in all_shifts:
-        model.add_exactly_one(shifts[(n, d, s)] for n in all_nurses)
-
-for n in all_nurses:
-    for d in all_days:
-        model.add_at_most_one(shifts[(n, d, s)] for s in all_shifts)
-
-# ================= Above DONE ======================
-
-min_shifts_per_nurse = (num_shifts * num_days) // num_nurses
-if num_shifts * num_days % num_nurses == 0:
-    max_shifts_per_nurse = min_shifts_per_nurse
-else:
-    max_shifts_per_nurse = min_shifts_per_nurse + 1
-
-for n in all_nurses:
-    shifts_worked = []
-    for d in all_days:
-        for s in all_shifts:
-            shifts_worked.append(shifts[(n, d, s)])
-
-    model.add(min_shifts_per_nurse <= sum(shifts_worked))
-    model.add(sum(shifts_worked) <= max_shifts_per_nurse)
-
-
-solver = cp_model.CpSolver()
-solver.parameters.linearization_level = 0
-# Enumerate all solutions.
-solver.parameters.enumerate_all_solutions = True
-
 
 class NursesPartialSolutionPrinter(cp_model.CpSolverSolutionCallback):
     """Print intermediate solutions."""
@@ -80,6 +34,22 @@ class NursesPartialSolutionPrinter(cp_model.CpSolverSolutionCallback):
         return self._solution_count
 
 
+min_shifts_per_nurse = (num_shifts * num_days) // num_nurses
+if num_shifts * num_days % num_nurses == 0:
+    max_shifts_per_nurse = min_shifts_per_nurse
+else:
+    max_shifts_per_nurse = min_shifts_per_nurse + 1
+
+for n in all_nurses:
+    shifts_worked = []
+    for d in all_days:
+        for s in all_shifts:
+            shifts_worked.append(shifts[(n, d, s)])
+
+    model.add(min_shifts_per_nurse <= sum(shifts_worked))
+    model.add(sum(shifts_worked) <= max_shifts_per_nurse)
+
+
 # Display the first five solutions.
 solution_limit = 5
 solution_printer = NursesPartialSolutionPrinter(
@@ -87,7 +57,7 @@ solution_printer = NursesPartialSolutionPrinter(
 )
 
 
-status = solver.solve(model, solution_printer)
+# status = solver.solve(model, solution_printer)
 
 
 if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
@@ -100,6 +70,3 @@ if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
                 print(work)
                 print(shifts[(n, d, s)])
                 print(type(shifts[(n, d, s)]))
-
-
-pass
