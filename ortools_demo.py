@@ -34,22 +34,6 @@ class NursesPartialSolutionPrinter(cp_model.CpSolverSolutionCallback):
         return self._solution_count
 
 
-min_shifts_per_nurse = (num_shifts * num_days) // num_nurses
-if num_shifts * num_days % num_nurses == 0:
-    max_shifts_per_nurse = min_shifts_per_nurse
-else:
-    max_shifts_per_nurse = min_shifts_per_nurse + 1
-
-for n in all_nurses:
-    shifts_worked = []
-    for d in all_days:
-        for s in all_shifts:
-            shifts_worked.append(shifts[(n, d, s)])
-
-    model.add(min_shifts_per_nurse <= sum(shifts_worked))
-    model.add(sum(shifts_worked) <= max_shifts_per_nurse)
-
-
 # Display the first five solutions.
 solution_limit = 5
 solution_printer = NursesPartialSolutionPrinter(
@@ -57,7 +41,7 @@ solution_printer = NursesPartialSolutionPrinter(
 )
 
 
-# status = solver.solve(model, solution_printer)
+pass
 
 
 if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:

@@ -73,7 +73,7 @@ compiled_agent = agent.compile()
 
 #     for chunk in compiled_agent.stream(
 #         {
-#             "messages": [HumanMessage(content="現在日期還有幾點幾分")],
+#             "messages": [HumanMessage(content="排六月的班表")],
 #         },
 #         # config=config,
 #         stream_mode="values",

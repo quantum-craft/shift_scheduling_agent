@@ -119,10 +119,33 @@ def initialize_ortools() -> str:
     return status
 
 
+@tool
+def execute_ortools_scheduling_solver() -> str:
+    """
+    真正執行排班最佳化工具求解器並回傳求解狀態。
+    此工具必須在呼叫 initialize_ortools() 並確認初始化成功後才能使用。
+    在 initialize_ortools() 和本工具之間，可選擇加入約束(constraints)和最佳化目標(optimization goals)。
+    額外constraints和optimization goals非必須。
+
+    說明：
+        此工具會呼叫 solver_manager.solve 方法來啟動排班模型的求解程序。
+
+    回傳值：
+        str: solver_manager.solve() 回傳的求解狀態字串，
+             表示求解是否成功或失敗，以及相關訊息。
+    """
+
+    # status = solver_manager.solver.solve(solver_manager.model, solution_printer)
+    status = solver_manager.solver.solve(solver_manager.model)
+
+    return status
+
+
 shift_scheduling_tool_list = [
     get_current_datetime,
     setup_date_interval_for_shift_scheduling,
     setup_workers_for_shift_scheduling,
     setup_shifts_for_shift_scheduling,
     initialize_ortools,
+    execute_ortools_scheduling_solver,
 ]

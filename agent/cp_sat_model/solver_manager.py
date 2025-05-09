@@ -25,27 +25,46 @@ class SolverManager:
             True  # Enumerate all solutions.
         )
 
+        num_workers = len(self.workers)
+        num_days = len(self.days)
+        num_shifts = len(self.shifts)
+
         self.shift_schedule = {}
-        for w in range(len(self.workers)):
-            for d in range(len(self.days)):
-                for s in range(len(self.shifts)):
+        for w in range(num_workers):
+            for d in range(num_days):
+                for s in range(num_shifts):
                     self.shift_schedule[(w, d, s)] = self.model.new_bool_var(
                         f"shift_w{w}_d{d}_s{s}"
                     )
 
         # 某一'天'的某一'班次' -> 一定要且只能有一位'員工'上班
-        for d in range(len(self.days)):
-            for s in range(len(self.shifts)):
+        for d in range(num_days):
+            for s in range(num_shifts):
                 self.model.add_exactly_one(
                     self.shift_schedule[(w, d, s)] for w in range(len(self.workers))
                 )
 
         # 某一'員工'在某一'天' -> 最多能上一個'班次'
-        for w in range(len(self.workers)):
-            for d in range(len(self.days)):
+        for w in range(num_workers):
+            for d in range(num_days):
                 self.model.add_at_most_one(
                     self.shift_schedule[(w, d, s)] for s in range(len(self.shifts))
                 )
+
+        min_shifts_per_worker = (num_shifts * num_days) // num_workers
+        if (num_shifts * num_days) % len(self.workers) == 0:
+            max_shifts_per_worker = min_shifts_per_worker
+        else:
+            max_shifts_per_worker = min_shifts_per_worker + 1
+
+        for n in range(num_workers):
+            shifts_worked = []
+            for d in range(num_days):
+                for s in range(num_shifts):
+                    shifts_worked.append(self.shift_schedule[(w, d, s)])
+
+            self.model.add(min_shifts_per_worker <= sum(shifts_worked))
+            self.model.add(sum(shifts_worked) <= max_shifts_per_worker)
 
         return (
             "排班最佳化工具(OR-Tools)的model和solver初始化成功(initialization successful).",
