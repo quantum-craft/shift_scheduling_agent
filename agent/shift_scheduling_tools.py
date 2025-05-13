@@ -166,6 +166,15 @@ def execute_ortools_scheduling_solver() -> str:
         solver_manager.model, solution_callback=solution_printer
     )
 
+    print(
+        "workers: ",
+        len(solver_manager.workers),
+        "days: ",
+        len(solver_manager.days),
+        "shifts: ",
+        len(solver_manager.shifts),
+    )
+
     if status == cp_model.OPTIMAL:
         return "OPTIMAL"
     elif status == cp_model.FEASIBLE:
