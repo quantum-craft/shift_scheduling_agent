@@ -69,6 +69,17 @@ def setup_workers_for_shift_scheduling() -> str:
             Worker(worker_id="李四"),
             Worker(worker_id="王五"),
             Worker(worker_id="趙六"),
+            Worker(worker_id="甲"),
+            Worker(worker_id="乙"),
+            Worker(worker_id="丙"),
+            Worker(worker_id="丁"),
+            Worker(worker_id="戊"),
+            Worker(worker_id="己"),
+            Worker(worker_id="庚"),
+            Worker(worker_id="辛"),
+            Worker(worker_id="壬"),
+            Worker(worker_id="癸"),
+            Worker(worker_id="子午未"),
         ]
     )
 
@@ -98,6 +109,11 @@ def setup_shifts_for_shift_scheduling() -> str:
             ),
             Shift(
                 id="晚班",
+                start_time=time(hour=18, minute=0, second=0),
+                end_time=time(hour=3, minute=0, second=0),
+            ),
+            Shift(
+                id="夜班",
                 start_time=time(hour=18, minute=0, second=0),
                 end_time=time(hour=3, minute=0, second=0),
             ),

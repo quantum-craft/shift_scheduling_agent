@@ -22,7 +22,7 @@ class SolverManager:
         self.solver = cp_model.CpSolver()
         self.solver.parameters.linearization_level = 0
         self.solver.parameters.enumerate_all_solutions = (
-            True  # Enumerate all solutions.
+            False  # Enumerate all solutions. # TODO: performance issue
         )
 
         num_workers = len(self.workers)
