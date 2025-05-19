@@ -37,6 +37,45 @@ class SolverManager:
                         f"shift_w{w}_d{d}_s{s}"
                     )
 
+        return (
+            "排班最佳化工具(OR-Tools)的model和solver初始化成功(initialization successful).",
+            True,
+        )
+
+    def clear(self):
+        """Clear current model and solution state"""
+
+        self.shifts = None
+        self.days = None
+        self.workers = None
+
+        self.shift_schedule = {}
+        self.solver = cp_model.CpSolver()
+        self.model = cp_model.CpModel()
+
+    def set_department(self, department: str, department_id: str):
+        """Set the department and department_id for the scheduling tool"""
+
+        self.department = department
+        self.department_id = department_id
+
+    def set_workers(self, workers: list[Worker]):
+        """Set the workers for the scheduling tool"""
+        self.workers = workers
+
+    def set_days(self, days: list[datetime]):
+        """Set the days for the scheduling tool"""
+        self.days = days
+
+    def set_shifts(self, shifts: list[Shift]):
+        """Set the shifts for the scheduling tool"""
+        self.shifts = shifts
+
+    def add_general_constraints(self):
+        num_workers = len(self.workers)
+        num_days = len(self.days)
+        num_shifts = len(self.shifts)
+
         # 某一'天'的某一'班次' -> 一定要且只能有一位'員工'上班
         for d in range(num_days):
             for s in range(num_shifts):
@@ -66,33 +105,11 @@ class SolverManager:
             self.model.add(min_shifts_per_worker <= sum(shifts_worked))
             self.model.add(sum(shifts_worked) <= max_shifts_per_worker)
 
-        return (
-            "排班最佳化工具(OR-Tools)的model和solver初始化成功(initialization successful).",
-            True,
-        )
-
-    def clear(self):
-        """Clear current model and solution state"""
-
-        self.shifts = None
-        self.days = None
-        self.workers = None
-
-        self.shift_schedule = {}
-        self.solver = cp_model.CpSolver()
-        self.model = cp_model.CpModel()
-
-    def set_workers(self, workers: list[Worker]):
-        """Set the workers for the scheduling tool"""
-        self.workers = workers
-
-    def set_days(self, days: list[datetime]):
-        """Set the days for the scheduling tool"""
-        self.days = days
-
-    def set_shifts(self, shifts: list[Shift]):
-        """Set the shifts for the scheduling tool"""
-        self.shifts = shifts
+    def add_leave_requirement_constraints(
+        leave_people: list[Worker], leave_days: list[datetime]
+    ):
+        # TODO:
+        pass
 
     def check_solver_status(self) -> tuple[str, bool]:
         if self.workers is None:

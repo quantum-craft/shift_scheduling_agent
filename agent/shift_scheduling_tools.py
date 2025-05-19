@@ -65,25 +65,46 @@ def setup_workers_for_shift_scheduling() -> str:
 
     solver_manager.set_workers(
         [
-            Worker(worker_id="張三"),
-            Worker(worker_id="李四"),
-            Worker(worker_id="王五"),
-            Worker(worker_id="趙六"),
-            Worker(worker_id="甲"),
-            Worker(worker_id="乙"),
-            Worker(worker_id="丙"),
-            Worker(worker_id="丁"),
-            Worker(worker_id="戊"),
-            Worker(worker_id="己"),
-            Worker(worker_id="庚"),
-            Worker(worker_id="辛"),
-            Worker(worker_id="壬"),
-            Worker(worker_id="癸"),
-            Worker(worker_id="子午未"),
+            Worker(worker_name="張三"),
+            Worker(worker_name="李四"),
+            Worker(worker_name="王五"),
+            Worker(worker_name="趙六"),
+            Worker(worker_name="甲"),
+            Worker(worker_name="乙"),
+            Worker(worker_name="丙"),
+            Worker(worker_name="丁"),
+            Worker(worker_name="戊"),
+            Worker(worker_name="己"),
+            Worker(worker_name="庚"),
+            Worker(worker_name="辛"),
+            Worker(worker_name="壬"),
+            Worker(worker_name="癸"),
+            Worker(worker_name="子午未"),
         ]
     )
 
     return "排班最佳化工具的員工設定成功."
+
+
+@tool
+def setup_department_for_shift_scheduling(
+    department: Annotated[str, "部門名稱"],
+    department_id: Annotated[str, "部門ID"],
+) -> str:
+    """
+    設定部門資訊，供排班最佳化工具使用。
+
+    Args:
+        department (str): 部門名稱。
+        department_id (str): 部門ID。
+
+    Returns:
+        str: 操作結果訊息，例如 "部門設定成功" 或錯誤訊息。
+    """
+
+    solver_manager.set_department(department, department_id)
+
+    return "排班最佳化工具的部門設定成功."
 
 
 @tool
@@ -135,6 +156,56 @@ def initialize_ortools() -> str:
     status, init_ok = solver_manager.init()
 
     return status
+
+
+@tool
+def add_general_constraints() -> str:
+    """
+    新增一般性約束條件至排班最佳化工具。
+
+    Returns:
+        str: 操作結果訊息，例如 "約束條件設定成功" 或錯誤訊息。
+    """
+
+    solver_manager.add_general_constraints()
+
+    return "排班最佳化工具的一般性約束條件設定成功."
+
+
+@tool
+def add_leave_requirement_constraints(
+    leave_people: Annotated[list[Worker], "請假人員清單"],
+    leave_days: Annotated[list[datetime], "請假日期清單"],
+) -> str:
+    """
+    新增區間內請假人員與日期的約束條件至排班最佳化工具。
+
+    Args:
+        leave_people (list[Worker]): 請假人員清單。
+        leave_days (list[datetime]): 請假日期清單。
+
+    Returns:
+        str: 操作結果訊息，例如 "新增區間內請假人員與日期的約束條件設定成功" 或錯誤訊息。
+    """
+
+    solver_manager.add_leave_requirement_constraints(
+        leave_people=leave_people, leave_days=leave_days
+    )
+
+    return "排班最佳化工具的區間內請假人員與日期設定成功."
+
+
+@tool
+def add_post_requirement_constraints() -> str:
+    """
+    新增區間內崗位人員最低需求至排班最佳化工具。
+
+    Returns:
+        str: 操作結果訊息，例如 "新增區間內崗位人員最低需求設定成功" 或錯誤訊息。
+    """
+
+    # TODO:
+    pass
 
 
 @tool
@@ -191,5 +262,6 @@ shift_scheduling_tool_list = [
     setup_workers_for_shift_scheduling,
     setup_shifts_for_shift_scheduling,
     initialize_ortools,
+    add_general_constraints,
     execute_ortools_scheduling_solver,
 ]
