@@ -42,6 +42,14 @@ langgraph build -t shift_scheduling_agent:latest
 
 docker compose up
 
+## 本機執行
+
+uv run langgraph dev # 直接 run
+
+uv run langgraph up # 會 build docker image
+
+localhost:3000/docs 可以看文件
+
 ## go to production todo list
 
 服務本身
