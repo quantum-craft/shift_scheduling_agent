@@ -23,15 +23,15 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
     print("Hello from Auth!")
 
     api_key = headers.get("x-api-key")
-    if not api_key:
-        raise Auth.exceptions.HTTPException(
-            status_code=401, detail="Hallo182 x-api-key not in headers"
-        )
+    # if not api_key:
+    #     raise Auth.exceptions.HTTPException(
+    #         status_code=401, detail="Hallo182 x-api-key not in headers"
+    #     )
 
-    if not is_valid_key(api_key):
-        raise Auth.exceptions.HTTPException(
-            status_code=401, detail="Hallo182 Invalid API key"
-        )
+    # if not is_valid_key(api_key):
+    #     raise Auth.exceptions.HTTPException(
+    #         status_code=401, detail="Hallo182 Invalid API key"
+    #     )
 
     return {
         "identity": "hallo-123",
