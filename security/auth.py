@@ -42,21 +42,21 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
     }
 
 
-def _default(ctx: Auth.types.AuthContext, value: dict):
-    metadata = value.setdefault("metadata", {})
-    metadata["owner"] = ctx.user.identity
+# def _default(ctx: Auth.types.AuthContext, value: dict):
+#     metadata = value.setdefault("metadata", {})
+#     metadata["owner"] = ctx.user.identity
 
-    return {"owner": ctx.user.identity}
+#     return {"owner": ctx.user.identity}
 
 
-@auth.on.threads.read
-async def rbac_create(ctx: Auth.types.AuthContext, value: dict):
-    if "threads:read" not in ctx.permissions or "threads:write" not in ctx.permissions:
-        raise Auth.exceptions.HTTPException(
-            status_code=482, detail="Hallo.QQ Unauthorized"
-        )
+# @auth.on.threads.read
+# async def rbac_create(ctx: Auth.types.AuthContext, value: dict):
+#     if "threads:read" not in ctx.permissions or "threads:write" not in ctx.permissions:
+#         raise Auth.exceptions.HTTPException(
+#             status_code=482, detail="Hallo.QQ Unauthorized"
+#         )
 
-    return _default(ctx, value)
+#     return _default(ctx, value)
 
 
 # @auth.on.assistants
