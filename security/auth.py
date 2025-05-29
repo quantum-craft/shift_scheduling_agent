@@ -36,7 +36,7 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
     return {
         "identity": "hallo-123",
         "is_authenticated": True,
-        "permissions": ["threads:read"],
+        "permissions": ["threads:write"],
         "role": "hallo god",
         "org_id": "org-mayohr",
     }
