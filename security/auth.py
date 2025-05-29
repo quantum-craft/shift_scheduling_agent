@@ -16,6 +16,14 @@ auth = Auth()
 @auth.authenticate
 async def get_current_user(authorization: str | None) -> Auth.types.MinimalUserDict:
     """Check if the user's token is valid."""
+
+    print("hello from Auth!")
+    print("hello from Auth!")
+    print("hello from Auth!")
+    print("hello from Auth!")
+    print("hello from Auth!")
+    print("hello from Auth!")
+
     assert authorization
 
     scheme, token = authorization.split()
