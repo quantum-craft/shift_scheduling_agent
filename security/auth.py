@@ -11,35 +11,34 @@ FAKE_VALID_TOKENS = {
 auth = Auth()
 
 
+def is_valid_key(api_key: str) -> bool:
+    return False
+
+
 # The `authenticate` decorator tells LangGraph to call this function as middleware
 # for every request. This will determine whether the request is allowed or not
 @auth.authenticate
-async def get_current_user(authorization: str | None) -> Auth.types.MinimalUserDict:
-    """Check if the user's token is valid."""
+async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
+    print("======================================")
+    print("Hello from Auth!")
 
-    print("hello from Auth!")
-    print("hello from Auth!")
-    print("hello from Auth!")
-    print("hello from Auth!")
-    print("hello from Auth!")
-    print("hello from Auth!")
+    api_key = headers.get("x-api-key")
+    if not api_key:
+        raise Auth.exceptions.HTTPException(
+            status_code=401, detail="Hallo182 x-api-key not in headers"
+        )
 
-    assert authorization
+    if not is_valid_key(api_key):
+        raise Auth.exceptions.HTTPException(
+            status_code=401, detail="Hallo182 Invalid API key"
+        )
 
-    scheme, token = authorization.split()
-
-    print(token)
-
-    assert scheme.lower() == "bearer"
-
-    # Check if token is valid
-    if token not in FAKE_VALID_TOKENS:
-        raise Auth.exceptions.HTTPException(status_code=401, detail="Invalid token")
-
-    # Return user info if valid
-    user_data = FAKE_VALID_TOKENS[token]
     return {
-        "identity": user_data["id"],
+        "identity": "hallo-123",
+        "is_authenticated": True,
+        "permissions": ["read", "write"],
+        "role": "hallo god",
+        "org_id": "org-mayohr",
     }
 
 
