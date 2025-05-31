@@ -40,7 +40,9 @@ langgraph build -t shift_scheduling_agent:latest
 
 ### 啟動服務
 
-docker compose up
+-- docker compose up
+
+docker compose --env-file .env.tstxe up
 
 ## go to production todo list
 
