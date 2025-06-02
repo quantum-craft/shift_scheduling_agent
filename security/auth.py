@@ -19,8 +19,8 @@ def is_valid_key(api_key: str) -> bool:
 # for every request. This will determine whether the request is allowed or not
 @auth.authenticate
 async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
-    print("======================================")
-    print("Hello from Auth!")
+    # print("======================================")
+    # print("Hello from Auth!")
 
     api_key = headers.get("x-api-key")
     # if not api_key:
