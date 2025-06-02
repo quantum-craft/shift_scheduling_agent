@@ -1,0 +1,16 @@
+.git/
+__pycache__/
+*.pyc
+*.pyo
+tests/
+notebooks/
+*.ipynb
+*.md
+examples/
+*.egg-info/
+
+.venv
+compose.yaml
+.gitignore
+uv.lock
+.vscode/
