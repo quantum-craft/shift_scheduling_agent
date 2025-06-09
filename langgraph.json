@@ -5,5 +5,8 @@
     "shift_scheduling_agent": "./agent/implementation.py:compiled_agent"
   },
   "env": ".env",
+  "http": {
+    "app": "./webapi/webapp.py:app"
+  },
   "developer_comment": "Add custom auth by adding key: \"auth\": {\"path\": \"./security/auth.py:auth\",\"disable_studio_auth\": \"true\"}"
 }
