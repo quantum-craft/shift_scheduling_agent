@@ -17,7 +17,6 @@ def get_model_with_shift_scheduling_tool(model_name: str):
 @lru_cache(maxsize=16)
 def get_model(model_name: str):
     """AzureChatOpenAI and ChatAnthropic are also available, but let's test with OpenAI first."""
-
-    model = ChatOpenAI(model=model_name)  # , reasoning_effort="medium")
+    model = AzureChatOpenAI(model=model_name,azure_deployment="shift-scheduling-agent_chat_gpt-4.1")  # , reasoning_effort="medium")
 
     return model
