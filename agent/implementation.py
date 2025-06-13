@@ -16,9 +16,8 @@ from langgraph.prebuilt import ToolNode
 from agent.shift_scheduling_tools import shift_scheduling_tool_list
 from agent.utils import get_model_with_shift_scheduling_tool
 
+
 # Nodes
-
-
 def node_shift_scheduling_agent(state: AgentState, config: RunnableConfig) -> dict:
     agent_config = AgentConfig.from_runnable_config(config)
 
@@ -29,8 +28,7 @@ def node_shift_scheduling_agent(state: AgentState, config: RunnableConfig) -> di
     messages = state.messages
     if agent_config.shift_scheduling_agent_system_prompt:
         messages = [
-            SystemMessage(
-                content=agent_config.shift_scheduling_agent_system_prompt)
+            SystemMessage(content=agent_config.shift_scheduling_agent_system_prompt)
         ] + messages
 
     response = model.invoke(messages)
@@ -62,7 +60,9 @@ agent = CustomAgent(
     ],
 )
 
+
 compiled_agent = agent.compile()
+
 
 # # Test codes
 # if __name__ == "__main__":

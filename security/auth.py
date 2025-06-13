@@ -3,6 +3,7 @@ import httpx
 from async_lru import alru_cache
 import os
 
+
 auth = Auth()
 
 
@@ -13,13 +14,13 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
 
     if not token:
         raise Auth.exceptions.HTTPException(
-            status_code=401,
-            detail="Authorization token is required."
+            status_code=401, detail="Authorization token is required."
         )
 
     user_dict = await __get_user_dict(token)
 
     return user_dict
+
 
 # # Matches the "thread" resource and all actions - create, read, update, delete, search
 # # Since this is **more specific** than the generic @auth.on handler, it will take precedence
@@ -85,25 +86,17 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
 
 @alru_cache(typed=True, ttl=60)
 async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
-    """ 驗證並取得使用者資訊 """
+    """驗證並取得使用者資訊"""
+
     async with httpx.AsyncClient() as client:
 
-        my_headers = {
-            "Authorization": token
-        }
+        my_headers = {"Authorization": token}
 
-        response = await client.get(
-            os.getenv("HRM_TOOL_ENDPOINT"),
-            headers=my_headers
-        )
+        response = await client.get(os.getenv("HRM_TOOL_ENDPOINT"), headers=my_headers)
 
         if response.status_code != 200:
             print(f"請求失敗，狀態碼: {response.status_code}")
-            return {
-                "identity": "None",
-                "is_authenticated": False,
-                "permissions": []
-            }
+            return {"identity": "None", "is_authenticated": False, "permissions": []}
 
         user_info = response.json().get("data")
 
@@ -117,9 +110,9 @@ async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
                 "employeeId": user_info.get("employeeId"),
                 "employeeNumber": user_info.get("employeeNumber"),
                 "employeeName": user_info.get("employeeName"),
-                "departmentId": user_info.get("departmentId")
+                "departmentId": user_info.get("departmentId"),
             },
-            "authorization_header": token
+            "authorization_header": token,
         }
 
         return user_dict
