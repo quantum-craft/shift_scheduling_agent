@@ -93,7 +93,7 @@ async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
         }
 
         response = await client.get(
-            os.getenv("HRM_TOOL_PATH"),
+            os.getenv("HRM_TOOL_ENDPOINT"),
             headers=my_headers
         )
 
