@@ -1,46 +1,49 @@
 from langgraph_sdk import Auth
+import httpx
+from async_lru import alru_cache
+import os
 
-# Warning! This is our toy user database. Do not do this in production
-FAKE_VALID_TOKENS = {
-    "user1-token": {"id": "user1", "name": "Alice"},
-    "user2-token": {"id": "user2", "name": "Bob"},
-    "HaHaHa": {"id": "user3", "name": "Charlie"},
-}
-
-# The "Auth" object is a container that LangGraph will use to mark our authentication function
 auth = Auth()
 
 
-def is_valid_key(api_key: str) -> bool:
-    return False
+@auth.authenticate
+async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
+    default_token = os.getenv("DEFAULT_TOKEN")
+    token = headers.get("Authorization", default_token)
 
+    if not token:
+        raise Auth.exceptions.HTTPException(
+            status_code=401,
+            detail="Authorization token is required."
+        )
+
+    user_dict = await __get_user_dict(token)
+
+    return user_dict
+
+# # Matches the "thread" resource and all actions - create, read, update, delete, search
+# # Since this is **more specific** than the generic @auth.on handler, it will take precedence
+# # over the generic handler for all actions on the "threads" resource
+# @auth.on.threads
+# async def on_thread(
+#     ctx: Auth.types.AuthContext,
+#     value: Auth.types.threads.create.value
+# ):
+#     if "write" not in ctx.permissions:
+#         raise Auth.exceptions.HTTPException(
+#             status_code=403,
+#             detail="User lacks the required permissions."
+#         )
+#     # Setting metadata on the thread being created
+#     # will ensure that the resource contains an "owner" field
+#     # Then any time a user tries to access this thread or runs within the thread,
+#     # we can filter by owner
+#     metadata = value.setdefault("metadata", {})
+#     metadata["owner"] = ctx.user.identity
+#     return {"owner": ctx.user.identity}
 
 # The `authenticate` decorator tells LangGraph to call this function as middleware
 # for every request. This will determine whether the request is allowed or not
-@auth.authenticate
-async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
-    # print("======================================")
-    # print("Hello from Auth!")
-
-    api_key = headers.get("x-api-key")
-    # if not api_key:
-    #     raise Auth.exceptions.HTTPException(
-    #         status_code=401, detail="Hallo182 x-api-key not in headers"
-    #     )
-
-    # if not is_valid_key(api_key):
-    #     raise Auth.exceptions.HTTPException(
-    #         status_code=401, detail="Hallo182 Invalid API key"
-    #     )
-
-    return {
-        "identity": "hallo-123",
-        "is_authenticated": True,
-        "permissions": ["threads:read", "threads:write"],
-        "role": "hallo god",
-        "org_id": "org-mayohr",
-    }
-
 
 # def _default(ctx: Auth.types.AuthContext, value: dict):
 #     metadata = value.setdefault("metadata", {})
@@ -78,3 +81,45 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
 #         status_code=403,
 #         detail="User lacks the required permissions.",
 #     )
+
+
+@alru_cache(typed=True, ttl=60)
+async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
+    """ 驗證並取得使用者資訊 """
+    async with httpx.AsyncClient() as client:
+
+        my_headers = {
+            "Authorization": token
+        }
+
+        response = await client.get(
+            os.getenv("HRM_TOOL_PATH"),
+            headers=my_headers
+        )
+
+        if response.status_code != 200:
+            print(f"請求失敗，狀態碼: {response.status_code}")
+            return {
+                "identity": "None",
+                "is_authenticated": False,
+                "permissions": []
+            }
+
+        user_info = response.json().get("data")
+
+        user_dict = {
+            "identity": user_info.get("employeeId"),
+            "display_name": user_info.get("employeeName"),
+            "is_authenticated": True,
+            "permissions": ["threads:read", "threads:write"],
+            "user_info": {
+                "companyId": user_info.get("companyId"),
+                "employeeId": user_info.get("employeeId"),
+                "employeeNumber": user_info.get("employeeNumber"),
+                "employeeName": user_info.get("employeeName"),
+                "departmentId": user_info.get("departmentId")
+            },
+            "authorization_header": token
+        }
+
+        return user_dict

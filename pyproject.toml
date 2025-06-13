@@ -13,7 +13,8 @@ dependencies = [
     "langgraph-sdk>=0.1.63",
     "ortools>=9.12.4544",
     "typing-extensions>=4.13.2",
-    "fastapi>=0.115.12"
+    "fastapi>=0.115.12",
+    "async-lru>=2.0.5"
 ]
 
 [build-system]

@@ -1,4 +1,5 @@
 from langchain_core.tools import tool
+from langchain_core.runnables import RunnableConfig
 from typing import Annotated
 from datetime import datetime
 from datetime import time
@@ -9,7 +10,6 @@ from agent.cp_sat_model.worker import Worker
 from agent.cp_sat_model.shift import Shift
 from ortools.sat.python import cp_model
 from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
-
 
 solver_manager = SolverManager()
 
@@ -29,7 +29,7 @@ def get_current_datetime() -> datetime:
 @tool
 def setup_date_interval_for_shift_scheduling(
     start_date_time: Annotated[datetime, "排班表的起始日期時間"],
-    end_date_time: Annotated[datetime, "排班表的結束日期時間"],
+    end_date_time: Annotated[datetime, "排班表的結束日期時間"]
 ) -> str:
     """
     必須先用工具 get_current_datetime 取得當前的日期和時間，
@@ -55,13 +55,18 @@ def setup_date_interval_for_shift_scheduling(
 
 
 @tool
-def setup_workers_for_shift_scheduling() -> str:
+def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
     """
     註冊員工清單至排班最佳化工具，以便後續排程使用。
 
     Returns:
         str: 操作結果訊息，例如 "員工設定成功" 或錯誤訊息。
     """
+
+    user_dict = config["configurable"]["langgraph_auth_user"]
+    token = user_dict["authorization_header"]
+    # TODO use token to call api
+    print(f"token:{token}")
 
     solver_manager.set_workers(
         [
