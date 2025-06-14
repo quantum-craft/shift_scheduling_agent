@@ -2,7 +2,7 @@ from langgraph_sdk import Auth
 import httpx
 from async_lru import alru_cache
 import os
-
+from urllib.parse import urljoin
 
 auth = Auth()
 
@@ -92,7 +92,17 @@ async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
 
         my_headers = {"Authorization": token}
 
-        response = await client.get(os.getenv("HRM_TOOL_ENDPOINT"), headers=my_headers)
+        base_url = os.getenv("HRM_TOOL_ENDPOINT")
+
+        if not base_url:
+            raise ValueError("環境變數 HRM_TOOL_ENDPOINT 未設定或為空值")
+
+        base_url = f"{base_url.rstrip('/')}/"
+        auth_route = "api/employees/me"
+
+        full_url = urljoin(base_url, auth_route)
+
+        response = await client.get(full_url, headers=my_headers)
 
         if response.status_code != 200:
             print(f"請求失敗，狀態碼: {response.status_code}")
