@@ -54,11 +54,11 @@ def setup_date_interval_for_shift_scheduling(
     all_days = range(len(dates))
     dates_indices_map = {d.isoformat(): i for i, d in enumerate(dates)}
 
-    solver_manager.set_dates(
+    set_dates_msg = solver_manager.set_dates(
         dates=dates, all_days=all_days, dates_indices_map=dates_indices_map
     )
 
-    return "排班最佳化工具的日期區間設定成功."
+    return set_dates_msg
 
 
 @tool

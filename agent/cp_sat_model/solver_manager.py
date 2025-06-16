@@ -85,9 +85,15 @@ class SolverManager:
         self, dates: list[date], all_days: range, dates_indices_map: dict[str, int]
     ):
         """Set dates, all_days, and dates_indices_map for the scheduling tool(ortools)"""
-        self.dates = dates
-        self.all_days = all_days
-        self.dates_indices_map = dates_indices_map
+
+        try:
+            self.dates = dates
+            self.all_days = all_days
+            self.dates_indices_map = dates_indices_map
+        except Exception as e:
+            return f"排班最佳化工具的日期區間設定失敗, 錯誤訊息: {e}"
+
+        return "排班最佳化工具的日期區間設定成功."
 
     def set_department(self, department: str, department_id: str):
         """Set the department and department_id for the scheduling tool"""
