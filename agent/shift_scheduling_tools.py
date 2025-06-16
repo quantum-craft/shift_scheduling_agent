@@ -3,6 +3,7 @@ from langchain_core.runnables import RunnableConfig
 from typing import Annotated
 from datetime import datetime
 from datetime import time
+from datetime import date
 from datetime import timedelta
 from pydantic import BaseModel, Field
 from agent.cp_sat_model.solver_manager import SolverManager
@@ -16,41 +17,46 @@ solver_manager = SolverManager()
 
 
 @tool
-def get_current_datetime() -> datetime:
+def get_current_date() -> datetime:
     """
-    取得並回傳當前日期時間，供後續排程運算使用。
+    取得並回傳當前日期，供後續排程運算使用。
 
     Returns:
-        datetime: 目前的日期與時間。
+        datetime: 目前的日期。
     """
 
-    return datetime.now()
+    return datetime.now().date()
 
 
 @tool
 def setup_date_interval_for_shift_scheduling(
-    start_date_time: Annotated[datetime, "排班表的起始日期時間"],
-    end_date_time: Annotated[datetime, "排班表的結束日期時間"],
+    start_date: Annotated[date, "排班表的起始日期"],
+    end_date: Annotated[date, "排班表的結束日期"],
 ) -> str:
     """
-    必須先用工具 get_current_datetime 取得當前的日期和時間，
-    接著根據推斷出的開始與結束日期時間，設定排班最佳化工具的日期區間。
+    必須先用工具 get_current_date 取得當前的日期，
+    接著根據推斷出的開始與結束日期，設定排班最佳化工具的日期區間。
 
     Args:
-        start_date_time (datetime): 排班表的起始日期時間。
-        end_date_time (datetime): 排班表的結束日期時間。
+        start_date (date): 排班表的起始日期。
+        end_date (date): 排班表的結束日期。
 
     Returns:
         str: 操作結果訊息，例如 "日期區間設定成功" 或錯誤訊息。
     """
 
-    ret_days = []
-    current = start_date_time
-    while current <= end_date_time:
-        ret_days.append(current)
+    dates = []
+    current = start_date
+    while current <= end_date:
+        dates.append(current)
         current += timedelta(days=1)
 
-    solver_manager.set_days(ret_days)
+    all_days = range(len(dates))
+    dates_indices_map = {d.isoformat(): i for i, d in enumerate(dates)}
+
+    solver_manager.set_dates(
+        dates=dates, all_days=all_days, dates_indices_map=dates_indices_map
+    )
 
     return "排班最佳化工具的日期區間設定成功."
 
@@ -234,7 +240,7 @@ def execute_ortools_scheduling_solver() -> str:
     solution_printer = WorkersPartialSolutionPrinter(
         solver_manager.shift_schedule,
         len(solver_manager.workers),
-        len(solver_manager.days),
+        len(solver_manager.dates),
         len(solver_manager.shifts),
         solution_limit=5,
     )
@@ -247,7 +253,7 @@ def execute_ortools_scheduling_solver() -> str:
         "workers: ",
         len(solver_manager.workers),
         "days: ",
-        len(solver_manager.days),
+        len(solver_manager.dates),
         "shifts: ",
         len(solver_manager.shifts),
     )
@@ -263,7 +269,7 @@ def execute_ortools_scheduling_solver() -> str:
 
 
 shift_scheduling_tool_list = [
-    get_current_datetime,
+    get_current_date,
     setup_date_interval_for_shift_scheduling,
     setup_workers_for_shift_scheduling,
     setup_shifts_for_shift_scheduling,
