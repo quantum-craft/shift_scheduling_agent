@@ -35,6 +35,37 @@ def time_str_to_time(time_str: str, side: str) -> time:
     return time_var
 
 
+def convert_start_end(start: time, end: time, bias: timedelta = timedelta(days=0)):
+    today = date.today()
+
+    dt_start = datetime.combine(today, start) + bias
+    dt_end = datetime.combine(today, end) + bias
+
+    if dt_end <= dt_start:
+        dt_end += timedelta(days=1)
+
+    return dt_start, dt_end
+
+
+def convert_start_end_list(start_ends):
+    ret = []
+    bias = timedelta(days=0)
+    for dt_start, dt_end in start_ends:
+        ret.append(convert_start_end(dt_start, dt_end, bias=bias))
+
+        if dt_start > dt_end:
+            bias += timedelta(days=1)
+
+    return ret
+
+
+def check_requirement_length(a: list, b: list, group_name: str):
+    if len(a) != len(b):
+        return False
+
+    return True
+
+
 @tool
 def get_current_date() -> datetime:
     """
@@ -165,6 +196,92 @@ def setup_shifts_for_shift_scheduling() -> str:
     )
 
     return set_shifts_msg
+
+
+@tool
+def setup_staff_requirement_for_shift_scheduling() -> str:
+    """
+    設定內外場最低人數需求至排班最佳化工具，以便後續排程使用。
+    此工具一定要在呼叫setup_shifts_for_shift_scheduling(註冊班次清單至排班最佳化工具)之後再呼叫。
+
+    Returns:
+         str: 操作結果訊息，例如 "內外場最低人數需求設定成功" 或錯誤訊息。
+    """
+
+    if solver_manager.shifts_start_ends == None:
+        return "請先設定班別班次(setup_shifts_for_shift_scheduling)，才能設定內外場最低人數需求."
+
+    # user_dict = config["configurable"]["langgraph_auth_user"]
+    # token = user_dict["authorization_header"]
+    # print(f"token:{token}")
+
+    # TODO: use token to call api
+    with open(Path("local_data/staff_requirement.json"), "r", encoding="utf-8") as f:
+        staff_requirement = json.load(f)
+
+    # Add more time slots to fit actual MAY schedule, this is a fake data for testing
+    staff_requirement["time_slots"].extend(
+        [["00:00", "01:00"], ["01:00", "02:00"], ["02:00", "03:00"], ["03:00", "04:00"]]
+    )
+    for gi in staff_requirement["group_infos"]:
+        gi["requirement"].extend([0, 0, 0, 0])
+
+    time_slots = staff_requirement["time_slots"]
+
+    time_slots_start_ends = [
+        (time_str_to_time(time_slot[0], "start"), time_str_to_time(time_slot[1], "end"))
+        for time_slot in time_slots
+    ]
+
+    time_slots_start_ends_converted = convert_start_end_list(time_slots_start_ends)
+
+    covering_shifts = []
+    for (
+        time_slot_start_converted,
+        time_slot_end_converted,
+    ) in time_slots_start_ends_converted:
+
+        covering_shift = []
+        for shift_idx, (shift_start, shift_end) in enumerate(
+            solver_manager.shifts_start_ends
+        ):
+            shift_start_converted, shift_end_converted = convert_start_end(
+                shift_start, shift_end
+            )
+
+            if (
+                shift_start_converted <= time_slot_start_converted
+                and shift_end_converted >= time_slot_end_converted
+            ):
+                covering_shift.append(shift_idx)
+
+        covering_shifts.append(covering_shift)
+
+    # Error check:
+    # Check group requirement length is equal to time_slots length
+    for group_info in staff_requirement["group_infos"]:
+        a = group_info["requirement"]
+        b = covering_shifts
+        group_name = group_info["group_name"]
+
+        if (
+            check_requirement_length(
+                a=a,
+                b=b,
+                group_name=group_name,
+            )
+            == False
+        ):
+            return f"Group {group_name}'s requirement length mismatch: {len(a)} != {len(b)}"
+
+    set_staff_requirement_msg = solver_manager.set_staff_requirement(
+        staff_requirement=staff_requirement,
+        time_slots=time_slots,
+        time_slots_start_ends=time_slots_start_ends,
+        covering_shifts=covering_shifts,
+    )
+
+    return set_staff_requirement_msg
 
 
 @tool
@@ -305,6 +422,7 @@ shift_scheduling_tool_list = [
     setup_date_interval_for_shift_scheduling,
     setup_workers_for_shift_scheduling,
     setup_shifts_for_shift_scheduling,
+    setup_staff_requirement_for_shift_scheduling,
     initialize_ortools,
     add_general_constraints,
     execute_ortools_scheduling_solver,

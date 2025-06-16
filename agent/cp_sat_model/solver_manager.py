@@ -76,6 +76,7 @@ class SolverManager:
         self.model = cp_model.CpModel()
 
         # TODO: more and more to be here
+        self.clear_staff_requirement()
         self.clear_shifts()
         self.clear_workers()
         self.clear_dates()
@@ -173,6 +174,38 @@ class SolverManager:
             return f"排班最佳化工具的班別班次清除失敗, 錯誤訊息: {e}"
 
         return "排班最佳化工具的班別班次清除成功."
+
+    def set_staff_requirement(
+        self,
+        staff_requirement: dict,
+        time_slots: list[list],
+        time_slots_start_ends: list[tuple],
+        covering_shifts: list[list],
+    ) -> str:
+        """Set staff_requirement, time_slots, time_slots_start_ends, and covering_shifts for the scheduling tool(ortools)"""
+
+        try:
+            self.staff_requirement = staff_requirement
+            self.time_slots = time_slots
+            self.time_slots_start_ends = time_slots_start_ends
+            self.covering_shifts = covering_shifts
+        except Exception as e:
+            return f"排班最佳化工具的內外場最低人數需求設定失敗, 錯誤訊息: {e}"
+
+        return "排班最佳化工具的內外場最低人數需求設定成功."
+
+    def clear_staff_requirement(self) -> str:
+        """Clear staff_requirement, time_slots, time_slots_start_ends, and covering_shifts and let the scheduling tool(ortools) understand it need to reset data."""
+
+        try:
+            self.staff_requirement = None
+            self.time_slots = None
+            self.time_slots_start_ends = None
+            self.covering_shifts = None
+        except Exception as e:
+            return f"排班最佳化工具的內外場最低人數需求清除失敗, 錯誤訊息: {e}"
+
+        return "排班最佳化工具的內外場最低人數需求清除成功."
 
     def add_general_constraints(self):
         # TODO:
