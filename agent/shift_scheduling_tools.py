@@ -1,3 +1,6 @@
+import json
+import copy
+from pathlib import Path
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnableConfig
 from typing import Annotated
@@ -5,16 +8,31 @@ from datetime import datetime
 from datetime import time
 from datetime import date
 from datetime import timedelta
-from pydantic import BaseModel, Field
 from agent.cp_sat_model.solver_manager import SolverManager
-from agent.cp_sat_model.shift import Shift
 from ortools.sat.python import cp_model
 from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
-import json
-from pathlib import Path
 
 
 solver_manager = SolverManager()
+
+
+def time_str_to_time(time_str: str, side: str) -> time:
+    split = time_str.split(":")
+    hour = split[0]
+    minute = split[1]
+
+    time_var = time(int(hour), int(minute))
+
+    # if side == "start":
+    #     if time_var == time(0, 0):
+    #         time_var = time(0, 0, 1)
+    # elif side == "end":
+    #     if time_var == time(0, 0):
+    #         time_var = time(23, 59, 59)
+    # else:
+    #     raise ValueError(f"Unknown side: {side}")
+
+    return time_var
 
 
 @tool
@@ -96,27 +114,6 @@ def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
 
 
 @tool
-def setup_department_for_shift_scheduling(
-    department: Annotated[str, "部門名稱"],
-    department_id: Annotated[str, "部門ID"],
-) -> str:
-    """
-    設定部門資訊，供排班最佳化工具使用。
-
-    Args:
-        department (str): 部門名稱。
-        department_id (str): 部門ID。
-
-    Returns:
-        str: 操作結果訊息，例如 "部門設定成功" 或錯誤訊息。
-    """
-
-    solver_manager.set_department(department, department_id)
-
-    return "排班最佳化工具的部門設定成功."
-
-
-@tool
 def setup_shifts_for_shift_scheduling() -> str:
     """
     註冊班次清單至排班最佳化工具，以便後續排程使用。
@@ -125,32 +122,34 @@ def setup_shifts_for_shift_scheduling() -> str:
         str: 操作結果訊息，例如 "班次設定成功" 或錯誤訊息。
     """
 
-    solver_manager.set_shifts(
-        [
-            Shift(
-                id="早班",
-                start_time=time(hour=9, minute=0, second=0),
-                end_time=time(hour=18, minute=0, second=0),
-            ),
-            Shift(
-                id="午班",
-                start_time=time(hour=13, minute=0, second=0),
-                end_time=time(hour=22, minute=0, second=0),
-            ),
-            Shift(
-                id="晚班",
-                start_time=time(hour=18, minute=0, second=0),
-                end_time=time(hour=3, minute=0, second=0),
-            ),
-            Shift(
-                id="夜班",
-                start_time=time(hour=18, minute=0, second=0),
-                end_time=time(hour=3, minute=0, second=0),
-            ),
-        ]
+    # user_dict = config["configurable"]["langgraph_auth_user"]
+    # token = user_dict["authorization_header"]
+    # print(f"token:{token}")
+
+    # TODO: use token to call api
+    with open(Path("local_data/shifts_MAY.json"), "r", encoding="utf-8") as f:
+        json_dict = json.load(f)
+
+    shifts = copy.deepcopy(json_dict)
+    all_shifts = range(len(shifts))
+    shifts_start_ends = [
+        (
+            time_str_to_time(shift["shift_start_time"], "start"),
+            time_str_to_time(shift["shift_end_time"], "end"),
+        )
+        for shift in shifts
+    ]
+
+    shifts_idx = {s["name"]: i for i, s in enumerate(shifts)}
+
+    set_shifts_msg = solver_manager.set_shifts(
+        shifts=shifts,
+        all_shifts=all_shifts,
+        shifts_start_ends=shifts_start_ends,
+        shifts_idx=shifts_idx,
     )
 
-    return "排班最佳化工具的班次設定成功."
+    return set_shifts_msg
 
 
 @tool
@@ -176,7 +175,7 @@ def add_general_constraints() -> str:
         str: 操作結果訊息，例如 "約束條件設定成功" 或錯誤訊息。
     """
 
-    solver_manager.add_general_constraints()
+    # solver_manager.add_general_constraints()
 
     return "排班最佳化工具的一般性約束條件設定成功."
 
@@ -202,6 +201,27 @@ def add_general_constraints() -> str:
 #     )
 
 #     return "排班最佳化工具的區間內請假人員與日期設定成功."
+
+
+@tool
+def setup_department_for_shift_scheduling(
+    department: Annotated[str, "部門名稱"],
+    department_id: Annotated[str, "部門ID"],
+) -> str:
+    """
+    設定部門資訊，供排班最佳化工具使用。
+
+    Args:
+        department (str): 部門名稱。
+        department_id (str): 部門ID。
+
+    Returns:
+        str: 操作結果訊息，例如 "部門設定成功" 或錯誤訊息。
+    """
+
+    solver_manager.set_department(department, department_id)
+
+    return "排班最佳化工具的部門設定成功."
 
 
 @tool

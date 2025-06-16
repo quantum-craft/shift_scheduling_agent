@@ -1,24 +1,24 @@
-from functools import lru_cache
-# from langchain_anthropic import ChatAnthropic
-from langchain_openai import AzureChatOpenAI  # ChatOpenAI
-from agent.shift_scheduling_tools import shift_scheduling_tool_list
 import os
+from functools import lru_cache
+from langchain_openai import AzureChatOpenAI
+from agent.shift_scheduling_tools import shift_scheduling_tool_list
 
 
 @lru_cache(maxsize=16)
 def get_model_with_shift_scheduling_tool(model_name: str):
     model = get_model(model_name)
 
-    model = model.bind_tools(shift_scheduling_tool_list,
-                             parallel_tool_calls=False)
-    # model = model.bind_tools(shift_scheduling_tool_list + [{"type": "web_search_preview"}])
+    model = model.bind_tools(shift_scheduling_tool_list, parallel_tool_calls=False)
 
     return model
 
 
 @lru_cache(maxsize=16)
 def get_model(model_name: str):
-    """Get chat model integration (e.g: ChatOpenAI / AzureChatOpenAI / ChatAnthropic... ref: https://python.langchain.com/docs/integrations/chat/)"""
-    model = AzureChatOpenAI(model=model_name, azure_deployment=os.getenv(
-        "AZURE_DEPLOYMENT"))  # , reasoning_effort="medium")
+    """Ref: https://python.langchain.com/docs/integrations/chat"""
+
+    model = AzureChatOpenAI(
+        model=model_name, azure_deployment=os.getenv("AZURE_DEPLOYMENT")
+    )
+
     return model
