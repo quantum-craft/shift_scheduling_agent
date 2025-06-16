@@ -106,8 +106,23 @@ def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
     for i in range(len(workers)):
         workers_dict[workers[i]]["workers_idx"] = i
 
+    group_workers = {}
+    for kv in workers_dict.items():
+        if kv[1]["group"] not in group_workers:
+            group_workers[kv[1]["group"]] = []
+
+        group_workers[kv[1]["group"]].append(kv[1]["workers_idx"])
+
+    group_workers_idx = {}
+    for group_name, workers_in_group in group_workers.items():
+        group_workers_idx[group_name] = {w: i for i, w in enumerate(workers_in_group)}
+
     set_workers_msg = solver_manager.set_workers(
-        workers=workers, all_workers=all_workers, workers_dict=workers_dict
+        workers=workers,
+        all_workers=all_workers,
+        workers_dict=workers_dict,
+        group_workers=group_workers,
+        group_workers_idx=group_workers_idx,
     )
 
     return set_workers_msg

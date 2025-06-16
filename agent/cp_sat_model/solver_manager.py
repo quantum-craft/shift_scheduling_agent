@@ -32,6 +32,8 @@ class SolverManager:
     workers: list[str] = None
     all_workers: range = None
     workers_dict: dict = None
+    group_workers: dict = None
+    group_workers_idx: dict = None
 
     """Shift related data."""
     shifts: list[dict] = None
@@ -68,10 +70,6 @@ class SolverManager:
 
     def clear(self):
         """Clear current model and solution state"""
-
-        self.shifts = None
-        self.days = None
-        self.workers = None
 
         self.shift_schedule = {}
         self.solver = cp_model.CpSolver()
@@ -110,7 +108,12 @@ class SolverManager:
         return "排班最佳化工具的日期區間清除成功."
 
     def set_workers(
-        self, workers: list[str], all_workers: range, workers_dict: dict
+        self,
+        workers: list[str],
+        all_workers: range,
+        workers_dict: dict,
+        group_workers: dict,
+        group_workers_idx: dict,
     ) -> str:
         """Set workers, all_workers, and workers_dict for the scheduling tool(ortools)"""
 
@@ -118,6 +121,8 @@ class SolverManager:
             self.workers = workers
             self.all_workers = all_workers
             self.workers_dict = workers_dict
+            self.group_workers = group_workers
+            self.group_workers_idx = group_workers_idx
         except Exception as e:
             return f"排班最佳化工具的員工設定失敗, 錯誤訊息: {e}"
 
@@ -130,6 +135,8 @@ class SolverManager:
             self.workers = None
             self.all_workers = None
             self.workers_dict = None
+            self.group_workers = None
+            self.group_workers_idx = None
         except Exception as e:
             return f"排班最佳化工具的員工清除失敗, 錯誤訊息: {e}"
 
