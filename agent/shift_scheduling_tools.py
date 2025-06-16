@@ -7,7 +7,6 @@ from datetime import date
 from datetime import timedelta
 from pydantic import BaseModel, Field
 from agent.cp_sat_model.solver_manager import SolverManager
-from agent.cp_sat_model.worker import Worker
 from agent.cp_sat_model.shift import Shift
 from ortools.sat.python import cp_model
 from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
@@ -63,23 +62,6 @@ def setup_date_interval_for_shift_scheduling(
     return set_dates_msg
 
 
-# TODO:
-def setup_workers(file_path: str):
-    with open(file_path, "r", encoding="utf-8") as f:
-        workers_dict = json.load(f)
-
-    sorted_items = sorted(workers_dict.items(), key=lambda kv: kv[1]["group"])
-    workers_dict = dict(sorted_items)
-
-    workers = list(workers_dict.keys())
-    all_workers = range(len(workers))
-
-    for i in range(len(workers)):
-        workers_dict[workers[i]]["workers_idx"] = i
-
-    return workers, all_workers, workers_dict
-
-
 @tool
 def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
     """
@@ -95,138 +77,22 @@ def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
 
     # TODO: use token to call api
     with open(Path("local_data/workers_MAY.json"), "r", encoding="utf-8") as f:
-        workers_dict = json.load(f)
+        json_dict = json.load(f)
 
-    print("ee182:", f"{len(workers_dict)}")
-    print("ee182:", f"{len(workers_dict)}")
-    print("ee182:", f"{len(workers_dict)}")
+    sorted_items = sorted(json_dict.items(), key=lambda kv: kv[1]["group"])
+    workers_dict = dict(sorted_items)
 
-    solver_manager.set_workers(
-        [
-            Worker(
-                name="張三",
-                id="123",
-                pay=100,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="A",
-            ),
-            Worker(
-                name="李四",
-                id="456",
-                pay=200,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="B",
-            ),
-            Worker(
-                name="王五",
-                id="789",
-                pay=300,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="C",
-            ),
-            Worker(
-                name="趙六",
-                id="101",
-                pay=400,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="D",
-            ),
-            Worker(
-                name="甲",
-                id="112",
-                pay=500,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="E",
-            ),
-            Worker(
-                name="乙",
-                id="123",
-                pay=100,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="A",
-            ),
-            Worker(
-                name="丙",
-                id="456",
-                pay=200,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="B",
-            ),
-            Worker(
-                name="丁",
-                id="789",
-                pay=300,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="C",
-            ),
-            Worker(
-                name="戊",
-                id="101",
-                pay=400,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="D",
-            ),
-            Worker(
-                name="己",
-                id="112",
-                pay=500,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="E",
-            ),
-            Worker(
-                name="庚",
-                id="123",
-                pay=100,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="A",
-            ),
-            Worker(
-                name="辛",
-                id="456",
-                pay=200,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="B",
-            ),
-            Worker(
-                name="壬",
-                id="789",
-                pay=300,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="C",
-            ),
-            Worker(
-                name="癸",
-                id="101",
-                pay=400,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="D",
-            ),
-            Worker(
-                name="子午未",
-                id="112",
-                pay=500,
-                payment_type="monthly",
-                employment_type="full-time",
-                group="E",
-            ),
-        ]
+    workers = list(workers_dict.keys())
+    all_workers = range(len(workers))
+
+    for i in range(len(workers)):
+        workers_dict[workers[i]]["workers_idx"] = i
+
+    set_workers_msg = solver_manager.set_workers(
+        workers=workers, all_workers=all_workers, workers_dict=workers_dict
     )
 
-    return f"排班最佳化工具的員工設定成功, 讀檔案也成功 ee182: {len(workers_dict)}"
+    return set_workers_msg
 
 
 @tool
@@ -315,27 +181,27 @@ def add_general_constraints() -> str:
     return "排班最佳化工具的一般性約束條件設定成功."
 
 
-@tool
-def add_leave_requirement_constraints(
-    leave_people: Annotated[list[Worker], "請假人員清單"],
-    leave_days: Annotated[list[datetime], "請假日期清單"],
-) -> str:
-    """
-    新增區間內請假人員與日期的約束條件至排班最佳化工具。
+# @tool
+# def add_leave_requirement_constraints(
+#     leave_people: Annotated[list[Worker], "請假人員清單"],
+#     leave_days: Annotated[list[datetime], "請假日期清單"],
+# ) -> str:
+#     """
+#     新增區間內請假人員與日期的約束條件至排班最佳化工具。
 
-    Args:
-        leave_people (list[Worker]): 請假人員清單。
-        leave_days (list[datetime]): 請假日期清單。
+#     Args:
+#         leave_people (list[Worker]): 請假人員清單。
+#         leave_days (list[datetime]): 請假日期清單。
 
-    Returns:
-        str: 操作結果訊息，例如 "新增區間內請假人員與日期的約束條件設定成功" 或錯誤訊息。
-    """
+#     Returns:
+#         str: 操作結果訊息，例如 "新增區間內請假人員與日期的約束條件設定成功" 或錯誤訊息。
+#     """
 
-    solver_manager.add_leave_requirement_constraints(
-        leave_people=leave_people, leave_days=leave_days
-    )
+#     solver_manager.add_leave_requirement_constraints(
+#         leave_people=leave_people, leave_days=leave_days
+#     )
 
-    return "排班最佳化工具的區間內請假人員與日期設定成功."
+#     return "排班最佳化工具的區間內請假人員與日期設定成功."
 
 
 @tool

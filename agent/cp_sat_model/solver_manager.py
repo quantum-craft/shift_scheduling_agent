@@ -2,7 +2,8 @@ from ortools.sat.python import cp_model
 from datetime import datetime
 from datetime import date
 from agent.cp_sat_model.shift import Shift
-from agent.cp_sat_model.worker import Worker
+
+# from agent.cp_sat_model.worker import Worker
 from typing import TypedDict
 from ortools.sat import cp_model_pb2
 
@@ -20,16 +21,21 @@ class GroupSolver(TypedDict):
 
 
 class SolverManager:
-    """Manages OR-Tools solver operations and state"""
+    """Manages OR-Tools solver operations and state."""
 
     group_solvers: dict[str, GroupSolver] = None
 
+    """Date related data."""
     dates: list[date] = None
     all_days: range = None
     dates_indices_map: dict[str, int] = None
 
-    workers: list[Worker] = None
+    """Worker(Employee) related data."""
+    workers: list[str] = None
+    all_workers: range = None
+    workers_dict: dict = None
 
+    """Shift related data."""
     shifts: list[Shift] = None
 
     def init(self) -> tuple[str, bool]:
@@ -74,6 +80,7 @@ class SolverManager:
         self.model = cp_model.CpModel()
 
         # TODO: more and more to be here
+        self.clear_workers()
         self.clear_dates()
         self.group_solvers = None
 
@@ -103,15 +110,29 @@ class SolverManager:
 
         return "排班最佳化工具的日期區間清除成功."
 
-    def set_department(self, department: str, department_id: str):
-        """Set the department and department_id for the scheduling tool"""
+    def set_workers(self, workers: list[str], all_workers: range, workers_dict: dict):
+        """Set workers, all_workers, and workers_dict for the scheduling tool(ortools)"""
 
-        self.department = department
-        self.department_id = department_id
+        try:
+            self.workers = workers
+            self.all_workers = all_workers
+            self.workers_dict = workers_dict
+        except Exception as e:
+            return f"排班最佳化工具的員工設定失敗, 錯誤訊息: {e}"
 
-    def set_workers(self, workers: list[Worker]):
-        """Set the workers for the scheduling tool"""
-        self.workers = workers
+        return f"排班最佳化工具的員工設定成功, 此次參與排班人數: {len(self.workers)}"
+
+    def clear_workers(self):
+        """Clear workers, all_workers, and workers_dict and let the scheduling tool(ortools) understand it need to reset data."""
+
+        try:
+            self.workers = None
+            self.all_workers = None
+            self.workers_dict = None
+        except Exception as e:
+            return f"排班最佳化工具的員工清除失敗, 錯誤訊息: {e}"
+
+        return "排班最佳化工具的員工清除成功."
 
     def set_shifts(self, shifts: list[Shift]):
         """Set the shifts for the scheduling tool"""
@@ -150,11 +171,11 @@ class SolverManager:
             self.model.add(min_shifts_per_worker <= sum(shifts_worked))
             self.model.add(sum(shifts_worked) <= max_shifts_per_worker)
 
-    def add_leave_requirement_constraints(
-        leave_people: list[Worker], leave_days: list[datetime]
-    ):
-        # TODO:
-        pass
+    def set_department(self, department: str, department_id: str):
+        """Set the department and department_id for the scheduling tool"""
+
+        self.department = department
+        self.department_id = department_id
 
     def check_solver_status(self) -> tuple[str, bool]:
         if self.workers is None:
