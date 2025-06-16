@@ -13,6 +13,7 @@ from ortools.sat.python import cp_model
 from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
 
 
+# TODO: handle multiple solver_manager instances and their life cycles for concurrent requests
 solver_manager = SolverManager()
 
 
@@ -333,40 +334,6 @@ def add_general_constraints() -> str:
 #     )
 
 #     return "排班最佳化工具的區間內請假人員與日期設定成功."
-
-
-@tool
-def setup_department_for_shift_scheduling(
-    department: Annotated[str, "部門名稱"],
-    department_id: Annotated[str, "部門ID"],
-) -> str:
-    """
-    設定部門資訊，供排班最佳化工具使用。
-
-    Args:
-        department (str): 部門名稱。
-        department_id (str): 部門ID。
-
-    Returns:
-        str: 操作結果訊息，例如 "部門設定成功" 或錯誤訊息。
-    """
-
-    solver_manager.set_department(department, department_id)
-
-    return "排班最佳化工具的部門設定成功."
-
-
-@tool
-def add_post_requirement_constraints() -> str:
-    """
-    新增區間內崗位人員最低需求至排班最佳化工具。
-
-    Returns:
-        str: 操作結果訊息，例如 "新增區間內崗位人員最低需求設定成功" 或錯誤訊息。
-    """
-
-    # TODO:
-    pass
 
 
 @tool
