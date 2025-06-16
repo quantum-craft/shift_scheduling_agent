@@ -1,8 +1,6 @@
 from langgraph_sdk import Auth
-import httpx
-from async_lru import alru_cache
 import os
-from urllib.parse import urljoin
+from hrm.webapi.unified.employees import employees
 
 auth = Auth()
 
@@ -83,46 +81,24 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
 #         detail="User lacks the required permissions.",
 #     )
 
-
-@alru_cache(typed=True, ttl=60)
 async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
     """驗證並取得使用者資訊"""
 
-    async with httpx.AsyncClient() as client:
+    user_info = await employees.get_my_employee_info(token)
+    
+    user_dict = {
+        "identity": user_info.data.employeeId,
+        "display_name": user_info.data.employeeName,
+        "is_authenticated": True,
+        "permissions": ["threads:read", "threads:write"],
+        "user_info": {
+            "companyId": user_info.data.companyId,
+            "employeeId": user_info.data.employeeId,
+            "employeeNumber": user_info.data.employeeNumber,
+            "employeeName": user_info.data.employeeName,
+            "departmentId": user_info.data.departmentId,
+        },
+        "authorization_header": token,
+    }
 
-        my_headers = {"Authorization": token}
-
-        base_url = os.getenv("HRM_TOOL_ENDPOINT")
-
-        if not base_url:
-            raise ValueError("環境變數 HRM_TOOL_ENDPOINT 未設定或為空值")
-
-        base_url = f"{base_url.rstrip('/')}/"
-        auth_route = "api/employees/me"
-
-        full_url = urljoin(base_url, auth_route)
-
-        response = await client.get(full_url, headers=my_headers)
-
-        if response.status_code != 200:
-            print(f"請求失敗，狀態碼: {response.status_code}")
-            return {"identity": "None", "is_authenticated": False, "permissions": []}
-
-        user_info = response.json().get("data")
-
-        user_dict = {
-            "identity": user_info.get("employeeId"),
-            "display_name": user_info.get("employeeName"),
-            "is_authenticated": True,
-            "permissions": ["threads:read", "threads:write"],
-            "user_info": {
-                "companyId": user_info.get("companyId"),
-                "employeeId": user_info.get("employeeId"),
-                "employeeNumber": user_info.get("employeeNumber"),
-                "employeeName": user_info.get("employeeName"),
-                "departmentId": user_info.get("departmentId"),
-            },
-            "authorization_header": token,
-        }
-
-        return user_dict
+    return user_dict
