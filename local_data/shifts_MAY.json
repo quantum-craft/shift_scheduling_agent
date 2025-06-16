@@ -1,0 +1,266 @@
+[
+    {
+        "name": "FT_1000_1900",
+        "employment_type": "FT",
+        "shift_start_time": "10:00",
+        "shift_end_time": "19:00",
+        "rest_start_time": "14:00",
+        "rest_end_time": "15:00"
+    },
+    {
+        "name": "FT_1000_2000",
+        "employment_type": "FT",
+        "shift_start_time": "10:00",
+        "shift_end_time": "20:00",
+        "rest_start_time": "14:00",
+        "rest_end_time": "15:00"
+    },
+    {
+        "name": "FT_0800_1700",
+        "employment_type": "FT",
+        "shift_start_time": "08:00",
+        "shift_end_time": "17:00",
+        "rest_start_time": "12:00",
+        "rest_end_time": "13:00"
+    },
+    {
+        "name": "FT_1100_2000",
+        "employment_type": "FT",
+        "shift_start_time": "11:00",
+        "shift_end_time": "20:00",
+        "rest_start_time": "15:00",
+        "rest_end_time": "16:00"
+    },
+    {
+        "name": "FT_1100_1600",
+        "employment_type": "FT",
+        "shift_start_time": "11:00",
+        "shift_end_time": "16:00",
+        "rest_start_time": "15:00",
+        "rest_end_time": "16:00"
+    },
+    {
+        "name": "FT_0900_1800",
+        "employment_type": "FT",
+        "shift_start_time": "09:00",
+        "shift_end_time": "18:00",
+        "rest_start_time": "13:00",
+        "rest_end_time": "14:00"
+    },
+    {
+        "name": "FT_1300_2200",
+        "employment_type": "FT",
+        "shift_start_time": "13:00",
+        "shift_end_time": "22:00",
+        "rest_start_time": "17:00",
+        "rest_end_time": "18:00"
+    },
+    {
+        "name": "FT_1400_2300",
+        "employment_type": "FT",
+        "shift_start_time": "14:00",
+        "shift_end_time": "23:00",
+        "rest_start_time": "18:00",
+        "rest_end_time": "19:00"
+    },
+    {
+        "name": "FT_1600_0100",
+        "employment_type": "FT",
+        "shift_start_time": "16:00",
+        "shift_end_time": "01:00",
+        "rest_start_time": "20:00",
+        "rest_end_time": "21:00"
+    },
+    {
+        "name": "FT_1400_1800",
+        "employment_type": "FT",
+        "shift_start_time": "14:00",
+        "shift_end_time": "18:00",
+        "rest_start_time": "18:00",
+        "rest_end_time": "19:00"
+    },
+    {
+        "name": "FT_1400_1730",
+        "employment_type": "FT",
+        "shift_start_time": "14:00",
+        "shift_end_time": "17:30",
+        "rest_start_time": "18:00",
+        "rest_end_time": "19:00"
+    },
+    {
+        "name": "PT_1100_1700",
+        "employment_type": "PT",
+        "shift_start_time": "11:00",
+        "shift_end_time": "17:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_0800_1700",
+        "employment_type": "PT",
+        "shift_start_time": "08:00",
+        "shift_end_time": "17:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_0800_1400",
+        "employment_type": "PT",
+        "shift_start_time": "08:00",
+        "shift_end_time": "14:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1800_2200",
+        "employment_type": "PT",
+        "shift_start_time": "18:00",
+        "shift_end_time": "22:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1000_1400",
+        "employment_type": "PT",
+        "shift_start_time": "10:00",
+        "shift_end_time": "14:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1200_1700",
+        "employment_type": "PT",
+        "shift_start_time": "12:00",
+        "shift_end_time": "17:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1100_1500",
+        "employment_type": "PT",
+        "shift_start_time": "11:00",
+        "shift_end_time": "15:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1000_1500",
+        "employment_type": "PT",
+        "shift_start_time": "10:00",
+        "shift_end_time": "15:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1100_1600",
+        "employment_type": "PT",
+        "shift_start_time": "11:00",
+        "shift_end_time": "16:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1100_1800",
+        "employment_type": "PT",
+        "shift_start_time": "11:00",
+        "shift_end_time": "18:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1300_1700",
+        "employment_type": "PT",
+        "shift_start_time": "13:00",
+        "shift_end_time": "17:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1400_2300",
+        "employment_type": "PT",
+        "shift_start_time": "14:00",
+        "shift_end_time": "23:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1300_1800",
+        "employment_type": "PT",
+        "shift_start_time": "13:00",
+        "shift_end_time": "18:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1200_2100",
+        "employment_type": "PT",
+        "shift_start_time": "12:00",
+        "shift_end_time": "21:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1200_1800",
+        "employment_type": "PT",
+        "shift_start_time": "12:00",
+        "shift_end_time": "18:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1800_2300",
+        "employment_type": "PT",
+        "shift_start_time": "18:00",
+        "shift_end_time": "23:00",
+        "rest_start_time": "21:30",
+        "rest_end_time": "22:00"
+    },
+    {
+        "name": "PT_2000_2200",
+        "employment_type": "PT",
+        "shift_start_time": "20:00",
+        "shift_end_time": "22:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1700_2300",
+        "employment_type": "PT",
+        "shift_start_time": "17:00",
+        "shift_end_time": "23:00",
+        "rest_start_time": "21:00",
+        "rest_end_time": "21:30"
+    },
+    {
+        "name": "PT_1830_2300",
+        "employment_type": "PT",
+        "shift_start_time": "18:30",
+        "shift_end_time": "23:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1900_2300",
+        "employment_type": "PT",
+        "shift_start_time": "19:00",
+        "shift_end_time": "23:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1200_1900",
+        "employment_type": "PT",
+        "shift_start_time": "12:00",
+        "shift_end_time": "19:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    },
+    {
+        "name": "PT_1700_2200",
+        "employment_type": "PT",
+        "shift_start_time": "17:00",
+        "shift_end_time": "22:00",
+        "rest_start_time": null,
+        "rest_end_time": null
+    }
+]

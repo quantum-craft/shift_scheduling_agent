@@ -1,0 +1,258 @@
+{
+    "陳韋州Willy": {
+        "name": "陳韋州Willy",
+        "id": "6f40a5d837104572a1a7b7306ec96342",
+        "pay": 45000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "0_主管"
+    },
+    "黄于玲Irin": {
+        "name": "黄于玲Irin",
+        "id": "b38932ae873b498b90d2ee3222e9b745",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "1_廚房"
+    },
+    "王大偉David": {
+        "name": "王大偉David",
+        "id": "9346e78fff5b4c679300005c1b7f06ad",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "1_廚房"
+    },
+    "曾子容polly": {
+        "name": "曾子容polly",
+        "id": "ec326f75a4434724ad94b4285b7db4eb",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "1_廚房"
+    },
+    "蔡佩頴Pearl": {
+        "name": "蔡佩頴Pearl",
+        "id": "5354ac1095f44298b3e364f94fbc7866",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "1_廚房"
+    },
+    "廖韋翔William": {
+        "name": "廖韋翔William",
+        "id": "306e0275bd4c4eb9bde0d28949f9ea28",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "2_切肉區"
+    },
+    "林奕成Eason": {
+        "name": "林奕成Eason",
+        "id": "395c4a0b9a314c1588c0009fb71c896a",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "2_切肉區"
+    },
+    "林鴻宇": {
+        "name": "林鴻宇",
+        "id": "3c601613cbd0490d811d2dbbc63c5221",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "2_切肉區"
+    },
+    "林湘豐Jerry": {
+        "name": "林湘豐Jerry",
+        "id": "ea8f858d42024c10aa8c50e4a4ba120e",
+        "pay": 45000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "0_主管"
+    },
+    "吳文成Cheng": {
+        "name": "吳文成Cheng",
+        "id": "5db448d2c01543949373bdb3db2a4d59",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "3_出餐"
+    },
+    "廖正興Bruce": {
+        "name": "廖正興Bruce",
+        "id": "58a18d4583294782bfd2454de4905455",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "3_出餐"
+    },
+    "李偉儒Curt": {
+        "name": "李偉儒Curt",
+        "id": "11b06cc032a64e9fbfc9bfbd6cb91390",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "3_出餐"
+    },
+    "李佳憲Chris": {
+        "name": "李佳憲Chris",
+        "id": "9b233d097a2b46f2ab1d3cf3d5aa624d",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "1_廚房"
+    },
+    "張維中": {
+        "name": "張維中",
+        "id": "71546fe1b8064997acd0599b66b4b9c9",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "1_廚房"
+    },
+    "呂偉豪Hao": {
+        "name": "呂偉豪Hao",
+        "id": "f25e7a2f18e44fa5a02dd8613a964036",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "3_出餐"
+    },
+    "潘立晨": {
+        "name": "潘立晨",
+        "id": "46878f87397f433f81ddfc0c8db809fa",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "3_出餐"
+    },
+    "李恆宇Paul": {
+        "name": "李恆宇Paul",
+        "id": "cf290230cd934353af4c72a0239db02b",
+        "pay": 38000,
+        "payment_type": "monthly",
+        "employment_type": "FT",
+        "group": "3_出餐"
+    },
+    "何宛臻Eddie": {
+        "name": "何宛臻Eddie",
+        "id": "a09beedeb2b948cf941340929bd63529",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    },
+    "賴竑瑋": {
+        "name": "賴竑瑋",
+        "id": "b46e3f8c4892443e92225302eb4c684c",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    },
+    "朱振元": {
+        "name": "朱振元",
+        "id": "1b1f9501cd8a4a2c82631b50c0cae92c",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "5_洗滌"
+    },
+    "連奕傑Eddie": {
+        "name": "連奕傑Eddie",
+        "id": "4fd6e9ca0b6b4a3ba668fd9f4ec3be52",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "5_洗滌"
+    },
+    "羅淑惠": {
+        "name": "羅淑惠",
+        "id": "2bfe87ede7924967ad675d426e130e75",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "5_洗滌"
+    },
+    "丁秋萍": {
+        "name": "丁秋萍",
+        "id": "80c3e55947c54b0a82dfcefe0225c33b",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "5_洗滌"
+    },
+    "蔡佳宏Hank": {
+        "name": "蔡佳宏Hank",
+        "id": "ff6a35bcc3dc4e4c8d0bc33b68cc39a5",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    },
+    "劉心瑀Kitty": {
+        "name": "劉心瑀Kitty",
+        "id": "0a20ff5f6ca24c7fa86a2befe62b6674",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    },
+    "鄭韋華": {
+        "name": "鄭韋華",
+        "id": "0b8b9b0e2f524b5f8b7a2f2a57217f31",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "5_洗滌"
+    },
+    "陶越勇": {
+        "name": "陶越勇",
+        "id": "ffa81930237a4514ab6b2bfaffd1b3e3",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "5_洗滌"
+    },
+    "吳信賢": {
+        "name": "吳信賢",
+        "id": "4d09eda4409c44779b4e9adebd55b52a",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    },
+    "薛宏偉": {
+        "name": "薛宏偉",
+        "id": "2363b748afef4706a3848e393463dcda",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    },
+    "林建偉Ken": {
+        "name": "林建偉Ken",
+        "id": "9d6da7d7beef40fc81e623e6719a0f65",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "5_洗滌"
+    },
+    "蔡曉威": {
+        "name": "蔡曉威",
+        "id": "128ada305e67489ba5d14e18f7e77a15",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    },
+    "郭宣似": {
+        "name": "郭宣似",
+        "id": "80d109aaf89843ddb3bb452d93c23f44",
+        "pay": 230,
+        "payment_type": "hourly",
+        "employment_type": "PT",
+        "group": "4_出餐_廚房"
+    }
+}

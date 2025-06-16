@@ -11,6 +11,8 @@ from agent.cp_sat_model.worker import Worker
 from agent.cp_sat_model.shift import Shift
 from ortools.sat.python import cp_model
 from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
+import json
+from pathlib import Path
 
 
 solver_manager = SolverManager()
@@ -61,6 +63,23 @@ def setup_date_interval_for_shift_scheduling(
     return set_dates_msg
 
 
+# TODO:
+def setup_workers(file_path: str):
+    with open(file_path, "r", encoding="utf-8") as f:
+        workers_dict = json.load(f)
+
+    sorted_items = sorted(workers_dict.items(), key=lambda kv: kv[1]["group"])
+    workers_dict = dict(sorted_items)
+
+    workers = list(workers_dict.keys())
+    all_workers = range(len(workers))
+
+    for i in range(len(workers)):
+        workers_dict[workers[i]]["workers_idx"] = i
+
+    return workers, all_workers, workers_dict
+
+
 @tool
 def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
     """
@@ -72,30 +91,142 @@ def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
 
     # user_dict = config["configurable"]["langgraph_auth_user"]
     # token = user_dict["authorization_header"]
-    # # TODO use token to call api
     # print(f"token:{token}")
+
+    # TODO: use token to call api
+    with open(Path("local_data/workers_MAY.json"), "r", encoding="utf-8") as f:
+        workers_dict = json.load(f)
+
+    print("ee182:", f"{len(workers_dict)}")
+    print("ee182:", f"{len(workers_dict)}")
+    print("ee182:", f"{len(workers_dict)}")
 
     solver_manager.set_workers(
         [
-            Worker(worker_name="張三"),
-            Worker(worker_name="李四"),
-            Worker(worker_name="王五"),
-            Worker(worker_name="趙六"),
-            Worker(worker_name="甲"),
-            Worker(worker_name="乙"),
-            Worker(worker_name="丙"),
-            Worker(worker_name="丁"),
-            Worker(worker_name="戊"),
-            Worker(worker_name="己"),
-            Worker(worker_name="庚"),
-            Worker(worker_name="辛"),
-            Worker(worker_name="壬"),
-            Worker(worker_name="癸"),
-            Worker(worker_name="子午未"),
+            Worker(
+                name="張三",
+                id="123",
+                pay=100,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="A",
+            ),
+            Worker(
+                name="李四",
+                id="456",
+                pay=200,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="B",
+            ),
+            Worker(
+                name="王五",
+                id="789",
+                pay=300,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="C",
+            ),
+            Worker(
+                name="趙六",
+                id="101",
+                pay=400,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="D",
+            ),
+            Worker(
+                name="甲",
+                id="112",
+                pay=500,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="E",
+            ),
+            Worker(
+                name="乙",
+                id="123",
+                pay=100,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="A",
+            ),
+            Worker(
+                name="丙",
+                id="456",
+                pay=200,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="B",
+            ),
+            Worker(
+                name="丁",
+                id="789",
+                pay=300,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="C",
+            ),
+            Worker(
+                name="戊",
+                id="101",
+                pay=400,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="D",
+            ),
+            Worker(
+                name="己",
+                id="112",
+                pay=500,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="E",
+            ),
+            Worker(
+                name="庚",
+                id="123",
+                pay=100,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="A",
+            ),
+            Worker(
+                name="辛",
+                id="456",
+                pay=200,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="B",
+            ),
+            Worker(
+                name="壬",
+                id="789",
+                pay=300,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="C",
+            ),
+            Worker(
+                name="癸",
+                id="101",
+                pay=400,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="D",
+            ),
+            Worker(
+                name="子午未",
+                id="112",
+                pay=500,
+                payment_type="monthly",
+                employment_type="full-time",
+                group="E",
+            ),
         ]
     )
 
-    return "排班最佳化工具的員工設定成功."
+    return f"排班最佳化工具的員工設定成功, 讀檔案也成功 ee182: {len(workers_dict)}"
 
 
 @tool

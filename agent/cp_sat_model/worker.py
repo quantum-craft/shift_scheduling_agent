@@ -1,12 +1,10 @@
-class Worker:
-    def __init__(
-        self,
-        worker_name: str,
-        worker_id: str = "ABCDEFG",
-        pay: int = 0,
-        pay_type: str = "hourly",
-    ):
-        self.worker_name = worker_name
-        self.worker_id = worker_id
-        self.pay = pay
-        self.pay_type = pay_type
+from pydantic import BaseModel
+
+
+class Worker(BaseModel):
+    name: str
+    id: str
+    pay: int
+    payment_type: str
+    employment_type: str
+    group: str

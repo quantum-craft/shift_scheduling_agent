@@ -74,16 +74,12 @@ class SolverManager:
         self.model = cp_model.CpModel()
 
         # TODO: more and more to be here
-
-        self.dates_indices_map = None
-        self.all_days = None
-        self.dates = None
-
+        self.clear_dates()
         self.group_solvers = None
 
     def set_dates(
         self, dates: list[date], all_days: range, dates_indices_map: dict[str, int]
-    ):
+    ) -> str:
         """Set dates, all_days, and dates_indices_map for the scheduling tool(ortools)"""
 
         try:
@@ -94,6 +90,18 @@ class SolverManager:
             return f"排班最佳化工具的日期區間設定失敗, 錯誤訊息: {e}"
 
         return "排班最佳化工具的日期區間設定成功."
+
+    def clear_dates(self) -> str:
+        """Clear dates, all_days, and dates_indices_map and let the scheduling tool(ortools) understand it need to reset data."""
+
+        try:
+            self.dates_indices_map = None
+            self.all_days = None
+            self.dates = None
+        except Exception as e:
+            return f"排班最佳化工具的日期區間清除失敗, 錯誤訊息: {e}"
+
+        return "排班最佳化工具的日期區間清除成功."
 
     def set_department(self, department: str, department_id: str):
         """Set the department and department_id for the scheduling tool"""
