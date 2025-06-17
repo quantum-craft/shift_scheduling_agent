@@ -14,3 +14,4 @@ compose.yaml
 .gitignore
 uv.lock
 .vscode/
+openapi.yaml

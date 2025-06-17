@@ -2,6 +2,11 @@ from langgraph_sdk import Auth
 import os
 from hrm.webapi.unified.employees import employees
 
+# from mayoapis.ubff import AuthenticatedClient
+# from mayoapis.ubff.models import EmployeeViewModelIEnumerableAPIResponse
+# from mayoapis.ubff.api.employee import get_api_employees_me
+# from mayoapis.ubff.types import Response
+
 auth = Auth()
 
 
@@ -80,6 +85,44 @@ async def authenticate(headers: dict) -> Auth.types.MinimalUserDict:
 #         status_code=403,
 #         detail="User lacks the required permissions.",
 #     )
+
+# async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
+#     """驗證並取得使用者資訊"""
+
+#     # user_info = await employees.get_my_employee_info(token)
+    
+#     base_url = os.getenv("HRM_TOOL_ENDPOINT")
+
+#     client = AuthenticatedClient(
+#         base_url=base_url,
+#         prefix="", 
+#         token=token
+#         )
+
+#     async with client as client:
+#         # user_info: EmployeeViewModelIEnumerableAPIResponse = await get_api_employees_me.asyncio(client=client)
+#         response: Response[EmployeeViewModelIEnumerableAPIResponse] = await get_api_employees_me.asyncio_detailed(client=client)
+        
+#     user_info = response.parsed
+    
+#     print(f"status_code:{response.status_code}")
+
+#     user_dict = {
+#         "identity": user_info.data.employeeId,
+#         "display_name": user_info.data.employeeName,
+#         "is_authenticated": True,
+#         "permissions": ["threads:read", "threads:write"],
+#         "user_info": {
+#             "companyId": user_info.data.companyId,
+#             "employeeId": user_info.data.employeeId,
+#             "employeeNumber": user_info.data.employeeNumber,
+#             "employeeName": user_info.data.employeeName,
+#             "departmentId": user_info.data.departmentId,
+#         },
+#         "authorization_header": token,
+#     }
+
+#     return user_dict
 
 async def __get_user_dict(token: str) -> Auth.types.MinimalUserDict:
     """驗證並取得使用者資訊"""

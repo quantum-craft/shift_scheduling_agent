@@ -14,8 +14,10 @@ dependencies = [
     "ortools>=9.12.4544",
     "typing-extensions>=4.13.2",
     "fastapi>=0.115.12",
-    "async-lru>=2.0.5"
+    "async-lru>=2.0.5",
+    "attrs>=22.2.0"
 ]
+
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
@@ -24,3 +26,4 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["agent*"]
+
