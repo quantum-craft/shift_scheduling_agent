@@ -1,4 +1,4 @@
-from solver_manager import GroupSolver
+from agent.cp_sat_model.group_solver import GroupSolver
 
 
 def day_off_request_per_group_optim_loss(

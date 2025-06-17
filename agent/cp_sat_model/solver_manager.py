@@ -1,11 +1,10 @@
 from ortools.sat.python import cp_model
-from datetime import datetime
-from datetime import date
-from datetime import time
+from datetime import date, time
+from agent.cp_sat_model.group_solver import GroupSolver
 from agent.cp_sat_model.constraints import worker_shift_constraint
 from agent.cp_sat_model.constraints import one_day_one_shift_constraint
 from agent.cp_sat_model.constraints import staff_requirement_constraint
-from agent.cp_sat_model.group_solver import GroupSolver
+from agent.cp_sat_model.optimizations import work_days_per_group_optim_loss
 
 
 class SolverManager:
@@ -278,3 +277,17 @@ class SolverManager:
             return f"排班最佳化工具的一般性約束條件設定失敗, 錯誤訊息: {e}"
 
         return "排班最佳化工具的一般性約束條件設定成功."
+
+    def add_min_work_days_optimization(self) -> str:
+        try:
+            for group_name, group_solver in self.group_solvers.items():
+                self.group_losses[group_name] += work_days_per_group_optim_loss(
+                    all_days=self.all_days,
+                    all_shifts=self.all_shifts,
+                    group_solver=group_solver,
+                )
+
+        except Exception as e:
+            return f"排班最佳化工具的最小化工作天數最佳化目標設定失敗, 錯誤訊息: {e}"
+
+        return "排班最佳化工具的最小化工作天數最佳化目標設定成功."

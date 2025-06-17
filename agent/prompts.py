@@ -7,8 +7,8 @@ SHIFT_SCHEDULING_AGENT_SYSTEM_PROMPT = """
 4. 設定內外場最低人數需求：呼叫 setup_staff_requirement_for_shift_scheduling() 設定內外場最低人數需求。此步驟忽略使用者輸入直接呼叫該工具。
 5. 初始化排班最佳化工具：呼叫 initialize_ortools() 初始化排班最佳化工具，並檢查回傳狀態。
 6. 確定排班最佳化工具初始化(initialize_ortools)成功後呼叫 add_general_constraints() 新增一般性約束條件至排班最佳化工具。
-7. 確定新增一般性約束條件至排班最佳化工具(add_general_constraints)成功後可以依照使用者需求加入約束(constraints)和最佳化目標(optimization goals)。
-8. 額外constraints和optimization goals非必須。
-9. 確定最佳化工具初始化(initialize_ortools)成功，使用者需要的constraints和optimization goals新增成功後, 呼叫execute_ortools_scheduling_solver真正開始排班。
+7. 呼叫 add_min_work_days_optimization() 新增最小化工作天數的最佳化目標至排班最佳化工具。
+8. 前述工作都回覆成功後可以依照使用者需求加入約束(constraints)和最佳化目標(optimization goals), 額外constraints和optimization goals非必須。
+9. 確定前述工作都回覆成功後, 呼叫execute_ortools_scheduling_solver()真正開始排班。
 10. 若有錯誤訊息，請回報給使用者並取得進一步的資訊。
 """

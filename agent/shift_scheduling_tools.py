@@ -313,6 +313,21 @@ def add_general_constraints() -> str:
     return general_constraints_msg
 
 
+# 最小化工作天數 = 最低成本 ?
+@tool
+def add_min_work_days_optimization() -> str:
+    """
+    新增最小化工作天數的最佳化目標至排班最佳化工具。
+
+    Returns:
+        str: 操作結果訊息，例如 "最小化工作天數的最佳化目標設定成功" 或錯誤訊息。
+    """
+
+    min_work_days_optimization_msg = solver_manager.add_min_work_days_optimization()
+
+    return min_work_days_optimization_msg
+
+
 @tool
 def execute_ortools_scheduling_solver() -> str:
     """
@@ -370,5 +385,6 @@ shift_scheduling_tool_list = [
     setup_staff_requirement_for_shift_scheduling,
     initialize_ortools,
     add_general_constraints,
+    add_min_work_days_optimization,
     execute_ortools_scheduling_solver,
 ]
