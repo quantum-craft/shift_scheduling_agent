@@ -67,6 +67,26 @@ def check_requirement_length(a: list, b: list, group_name: str):
     return True
 
 
+def map_model_status(code: int) -> str:
+    if code == cp_model.OPTIMAL:
+        # 4
+        return "OPTIMAL"
+    elif code == cp_model.FEASIBLE:
+        # 2
+        return "FEASIBLE"
+    elif code == cp_model.INFEASIBLE:
+        # 3
+        return "INFEASIBLE"
+    elif code == cp_model.MODEL_INVALID:
+        # 1
+        return "MODEL_INVALID"
+    elif code == cp_model.UNKNOWN:
+        # 0
+        return "UNKNOWN"
+    else:
+        raise ValueError(f"Unknown status code: {code}")
+
+
 @tool
 def get_current_date() -> datetime:
     """
@@ -351,12 +371,11 @@ def add_worker_day_off_requests_optimization() -> str:
 
 
 @tool
-def execute_ortools_scheduling_solver() -> str:
+def execute_ortools_scheduling_group_solvers() -> str:
     """
     真正執行排班最佳化工具求解器並回傳求解狀態。
     此工具必須在呼叫 initialize_ortools() 並確認初始化成功後才能使用。
     在 initialize_ortools() 和本工具之間，可選擇加入約束(constraints)和最佳化目標(optimization goals)。
-    額外constraints和optimization goals非必須。
 
     說明：
         此工具會呼叫 solver_manager.solve 方法來啟動排班模型的求解程序。
@@ -366,37 +385,24 @@ def execute_ortools_scheduling_solver() -> str:
              表示求解是否成功或失敗，以及相關訊息。
     """
 
-    # Display the first five solutions.
-    solution_printer = WorkersPartialSolutionPrinter(
-        solver_manager.group_solvers["1_廚房"]["shift_schedule"],
-        len(solver_manager.group_solvers["1_廚房"]["workers_in_group"]),
-        len(solver_manager.group_solvers["1_廚房"]["all_days"]),
-        len(solver_manager.group_solvers["1_廚房"]["all_shifts"]),
-        solution_limit=5,
-    )
+    # Optimizations.
+    for group_name, group_loss in solver_manager.group_losses.items():
+        solver_manager.group_solvers[group_name]["model"].minimize(group_loss)
 
-    status = solver_manager.group_solvers["1_廚房"]["solver"].solve(
-        solver_manager.group_solvers["1_廚房"]["model"],
-        solution_callback=solution_printer,
-    )
+    # Solve the model for shift_schedule-s for each group.
+    for group_name, group_solver in solver_manager.group_solvers.items():
+        group_solver["solver_status"] = group_solver["solver"].solve(
+            group_solver["model"]
+        )
 
-    print(
-        "workers: ",
-        len(solver_manager.group_solvers["1_廚房"]["workers_in_group"]),
-        "days: ",
-        len(solver_manager.group_solvers["1_廚房"]["all_days"]),
-        "shifts: ",
-        len(solver_manager.group_solvers["1_廚房"]["all_shifts"]),
-    )
+    return_str = []
+    for group_name, group_solver in solver_manager.group_solvers.items():
+        group_status = group_solver["solver_status"]
+        group_status_str = map_model_status(group_status)
 
-    if status == cp_model.OPTIMAL:
-        return "OPTIMAL"
-    elif status == cp_model.FEASIBLE:
-        return "FEASIBLE"
-    elif status == cp_model.INFEASIBLE:
-        return "INFEASIBLE"
-    else:
-        return status
+        return_str.append(f"Group {group_name} status: {group_status_str}")
+
+    return "\n".join(return_str)
 
 
 shift_scheduling_tool_list = [
@@ -409,5 +415,5 @@ shift_scheduling_tool_list = [
     add_general_constraints,
     add_min_work_days_optimization,
     add_worker_day_off_requests_optimization,
-    execute_ortools_scheduling_solver,
+    execute_ortools_scheduling_group_solvers,
 ]
