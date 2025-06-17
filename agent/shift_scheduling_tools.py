@@ -328,6 +328,28 @@ def add_min_work_days_optimization() -> str:
     return min_work_days_optimization_msg
 
 
+# 員工預排休最佳化
+@tool
+def add_worker_day_off_requests_optimization() -> str:
+    """
+    新增員工預排休最佳化目標至排班最佳化工具。
+
+    Returns:
+        str: 操作結果訊息，例如 "員工預排休的最佳化目標設定成功" 或錯誤訊息。
+    """
+
+    with open("local_data/day_off_requests.json", "r", encoding="utf-8") as f:
+        day_off_requests = json.load(f)
+
+    worker_day_off_requests_optimization_msg = (
+        solver_manager.add_worker_day_off_requests_optimization(
+            day_off_requests=day_off_requests
+        )
+    )
+
+    return worker_day_off_requests_optimization_msg
+
+
 @tool
 def execute_ortools_scheduling_solver() -> str:
     """
@@ -386,5 +408,6 @@ shift_scheduling_tool_list = [
     initialize_ortools,
     add_general_constraints,
     add_min_work_days_optimization,
+    add_worker_day_off_requests_optimization,
     execute_ortools_scheduling_solver,
 ]

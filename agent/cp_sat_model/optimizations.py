@@ -19,9 +19,10 @@ def day_off_request_per_group_optim_loss(
         for day_off_request in worker_info.get("day_off_requests", []):
             day_off_str = day_off_request.isoformat()
             if day_off_str not in dates_indices_map:
-                raise ValueError(
-                    f"Day off request {day_off_str} for worker {workers[worker_idx]} not found in dates_indices_map."
-                )
+                continue
+                # raise ValueError(
+                #     f"Day off request {day_off_str} for worker {workers[worker_idx]} not found in dates_indices_map."
+                # )
 
             d = dates_indices_map[day_off_str]
 

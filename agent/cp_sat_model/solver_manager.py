@@ -1,10 +1,12 @@
 from ortools.sat.python import cp_model
+from dateutil import parser
 from datetime import date, time
 from agent.cp_sat_model.group_solver import GroupSolver
 from agent.cp_sat_model.constraints import worker_shift_constraint
 from agent.cp_sat_model.constraints import one_day_one_shift_constraint
 from agent.cp_sat_model.constraints import staff_requirement_constraint
 from agent.cp_sat_model.optimizations import work_days_per_group_optim_loss
+from agent.cp_sat_model.optimizations import day_off_request_per_group_optim_loss
 
 
 class SolverManager:
@@ -291,3 +293,46 @@ class SolverManager:
             return f"排班最佳化工具的最小化工作天數最佳化目標設定失敗, 錯誤訊息: {e}"
 
         return "排班最佳化工具的最小化工作天數最佳化目標設定成功."
+
+    def add_worker_day_off_requests_optimization(self, day_off_requests: dict) -> str:
+        try:
+            for kv in day_off_requests.items():
+                self.workers_dict[kv[0]]["day_off_requests"] = [
+                    parser.parse(date_str).date() for date_str in kv[1]
+                ]
+
+            for group_name, group_solver in self.group_solvers.items():
+                self.group_losses[group_name] += day_off_request_per_group_optim_loss(
+                    workers=self.workers,
+                    workers_dict=self.workers_dict,
+                    all_shifts=self.all_shifts,
+                    dates_indices_map=self.dates_indices_map,
+                    group_solver=group_solver,
+                )
+
+        except Exception as e:
+            return f"排班最佳化工具的員工預排休最佳化目標設定失敗, 錯誤訊息: {e}"
+
+        return "排班最佳化工具的員工預排休最佳化目標設定成功."
+
+
+# 以下也許也需要:
+# # 勞基法
+# # 四週變形工時
+# labor_law_days_off_constraint(
+#     all_days=all_days,
+#     all_shifts=all_shifts,
+#     group_solvers=solver_manager.group_solvers,
+# )
+
+# 平均工時
+# for i in all_nurses:
+#     model.add(sum([shifts[(i, d)] for d in all_days]) <= (need_days_per_worker + 1))
+#     model.add(sum([shifts[(i, d)] for d in all_days]) >= need_days_per_worker)
+
+# 最低成本
+# total_shift_cost = 0
+# for n in all_nurses:
+#     for d in all_days:
+#         total_shift_cost += employees_day_pays[n] * shifts[(n, d)]
+# model.Minimize(total_shift_cost)

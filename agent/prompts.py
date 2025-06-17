@@ -8,7 +8,8 @@ SHIFT_SCHEDULING_AGENT_SYSTEM_PROMPT = """
 5. 初始化排班最佳化工具：呼叫 initialize_ortools() 初始化排班最佳化工具，並檢查回傳狀態。
 6. 確定排班最佳化工具初始化(initialize_ortools)成功後呼叫 add_general_constraints() 新增一般性約束條件至排班最佳化工具。
 7. 呼叫 add_min_work_days_optimization() 新增最小化工作天數的最佳化目標至排班最佳化工具。
-8. 前述工作都回覆成功後可以依照使用者需求加入約束(constraints)和最佳化目標(optimization goals), 額外constraints和optimization goals非必須。
-9. 確定前述工作都回覆成功後, 呼叫execute_ortools_scheduling_solver()真正開始排班。
-10. 若有錯誤訊息，請回報給使用者並取得進一步的資訊。
+8. 呼叫 add_worker_day_off_requests_optimization() 新增員工預排休最佳化目標至排班最佳化工具。
+9. 前述工作都回覆成功後可以依照使用者需求加入約束(constraints)和最佳化目標(optimization goals), 額外constraints和optimization goals非必須。
+10. 確定前述工作都回覆成功後, 呼叫execute_ortools_scheduling_solver()真正開始排班。
+11. 若有錯誤訊息，請回報給使用者並取得進一步的資訊。
 """
