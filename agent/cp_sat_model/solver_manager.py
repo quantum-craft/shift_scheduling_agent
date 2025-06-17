@@ -2,20 +2,10 @@ from ortools.sat.python import cp_model
 from datetime import datetime
 from datetime import date
 from datetime import time
-from typing import TypedDict
-from ortools.sat import cp_model_pb2
-
-
-class GroupSolver(TypedDict):
-    group_name: str
-    model: cp_model.CpModel
-    solver: cp_model.CpSolver
-    solver_status: cp_model_pb2.CpSolverStatus
-    shift_schedule: dict
-    workers_in_group: list
-    workers_in_group_idx: dict
-    all_days: range
-    all_shifts: range
+from agent.cp_sat_model.constraints import worker_shift_constraint
+from agent.cp_sat_model.constraints import one_day_one_shift_constraint
+from agent.cp_sat_model.constraints import staff_requirement_constraint
+from agent.cp_sat_model.group_solver import GroupSolver
 
 
 class SolverManager:
@@ -42,40 +32,52 @@ class SolverManager:
     shifts_idx: dict[str, int] = None
 
     def init(self) -> tuple[str, bool]:
-        """Initialize the solver and model"""
+        """Initialize group solvers and models for each group"""
 
         (status, status_ok) = self.check_solver_status()
         if not status_ok:
             return status, False
 
-        self.model = cp_model.CpModel()
-        self.solver = cp_model.CpSolver()
-        self.solver.parameters.linearization_level = 0
-        self.solver.parameters.enumerate_all_solutions = (
-            False  # Enumerate all solutions. # TODO: performance issue
-        )
+        self.group_solvers = {}
+        for group_name, workers_in_group in self.group_workers.items():
+            model = cp_model.CpModel()
+            model.name = f"model_{group_name}"
 
-        self.shift_schedule = {}
-        for w in self.all_workers:
-            for d in self.all_days:
-                for s in self.all_shifts:
-                    self.shift_schedule[(w, d, s)] = self.model.new_bool_var(
-                        f"shift_w{w}_d{d}_s{s}"
-                    )
+            solver = cp_model.CpSolver()
+            # 這個參數對performance的影響是什麼?
+            solver.parameters.linearization_level = 0
+            solver.parameters.enumerate_all_solutions = False
+            # solver.parameters.max_deterministic_time = 5
+            # solver.parameters.max_time_in_seconds = 5
+
+            shift_schedule = {}
+            for w in range(len(workers_in_group)):
+                for d in self.all_days:
+                    for s in self.all_shifts:
+                        shift_schedule[(w, d, s)] = model.new_bool_var(
+                            f"shift_w{w}_d{d}_s{s}"
+                        )
+
+            self.group_solvers[group_name] = GroupSolver(
+                group_name=group_name,
+                model=model,
+                solver=solver,
+                solver_status=None,
+                shift_schedule=shift_schedule,
+                workers_in_group=workers_in_group,
+                workers_in_group_idx=self.group_workers_idx[group_name],
+                all_days=self.all_days,
+                all_shifts=self.all_shifts,
+            )
 
         return (
-            "排班最佳化工具(OR-Tools)的model和solver初始化成功(initialization successful).",
+            "排班最佳化工具的group models 和 solvers 初始化成功.",
             True,
         )
 
     def clear(self):
-        """Clear current model and solution state"""
+        """Clear group models and solver states."""
 
-        self.shift_schedule = {}
-        self.solver = cp_model.CpSolver()
-        self.model = cp_model.CpModel()
-
-        # TODO: more and more to be here
         self.clear_staff_requirement()
         self.clear_shifts()
         self.clear_workers()
@@ -207,61 +209,63 @@ class SolverManager:
 
         return "排班最佳化工具的內外場最低人數需求清除成功."
 
-    def add_general_constraints(self):
-        # TODO:
-        pass
-        # num_workers = len(self.workers)
-        # num_shifts = len(self.shifts)
+    def add_general_constraints(self) -> str:
+        try:
+            # FullTime的人員只能拿FT的班次, PartTime的人員只能拿PT班次.
+            worker_shift_constraint(
+                workers=self.workers,
+                workers_dict=self.workers_dict,
+                all_days=self.all_days,
+                all_shifts=self.all_shifts,
+                shifts=self.shifts,
+                group_solvers=self.group_solvers,
+            )
 
-        # # 某一'天'的某一'班次' -> 一定要且只能有一位'員工'上班
-        # for d in self.all_days:
-        #     for s in range(num_shifts):
-        #         self.model.add_exactly_one(
-        #             self.shift_schedule[(w, d, s)] for w in range(len(self.workers))
-        #         )
+            # 某一員工在某一天最多只能上一個班次.
+            one_day_one_shift_constraint(
+                all_days=self.all_days,
+                all_shifts=self.all_shifts,
+                group_solvers=self.group_solvers,
+            )
 
-        # # 某一'員工'在某一'天' -> 最多能上一個'班次'
-        # for w in range(num_workers):
-        #     for d in self.all_days:
-        #         self.model.add_at_most_one(
-        #             self.shift_schedule[(w, d, s)] for s in range(len(self.shifts))
-        #         )
+            # 符合內場最低人數需求
+            staff_requirement_constraint(
+                all_days=self.all_days,
+                staff_requirement=self.staff_requirement,
+                covering_shifts=self.covering_shifts,
+                group_solvers=self.group_solvers,
+            )
+        except Exception as e:
+            return f"排班最佳化工具的一般性約束條件設定失敗, 錯誤訊息: {e}"
 
-        # min_shifts_per_worker = (num_shifts * len(self.all_days)) // num_workers
-        # if (num_shifts * len(self.all_days)) % len(self.workers) == 0:
-        #     max_shifts_per_worker = min_shifts_per_worker
-        # else:
-        #     max_shifts_per_worker = min_shifts_per_worker + 1
-
-        # for w in range(num_workers):
-        #     shifts_worked = []
-        #     for d in self.all_days:
-        #         for s in range(num_shifts):
-        #             shifts_worked.append(self.shift_schedule[(w, d, s)])
-
-        #     self.model.add(min_shifts_per_worker <= sum(shifts_worked))
-        #     self.model.add(sum(shifts_worked) <= max_shifts_per_worker)
+        return "排班最佳化工具的一般性約束條件設定成功."
 
     def check_solver_status(self) -> tuple[str, bool]:
         if self.workers is None:
             return (
-                "排班最佳化工具(OR-Tools)的員工(Workers)沒有設置, 請詢問使用者更多的資訊.",
+                "排班最佳化工具的員工(workers)沒有設置, 此tool一定要在呼叫setup_workers_for_shift_scheduling後呼叫.",
                 False,
             )
 
         if self.dates is None:
             return (
-                "排班最佳化工具(OR-Tools)的日期區間(Dates)沒有設置, 請詢問使用者更多的資訊.",
+                "排班最佳化工具的日期區間(dates)沒有設置, 此tool一定要在呼叫setup_date_interval_for_shift_scheduling後呼叫.",
                 False,
             )
 
         if self.shifts is None:
             return (
-                "排班最佳化工具(OR-Tools)的班次(Shifts)沒有設置, 請詢問使用者更多的資訊.",
+                "排班最佳化工具的班次(shifts)沒有設置, 此tool一定要在呼叫setup_shifts_for_shift_scheduling後呼叫.",
+                False,
+            )
+
+        if self.group_workers is None:
+            return (
+                "排班最佳化工具的員工群組(group_workers)沒有設置, 此tool一定要在呼叫setup_workers_for_shift_scheduling後呼叫.",
                 False,
             )
 
         return (
-            "排班最佳化工具(OR-Tools)的資料(Workers, Days, and Shifts)都設置成功",
+            "排班最佳化工具的資料(workers, days, shifts, and group_workers)都設置成功",
             True,
         )

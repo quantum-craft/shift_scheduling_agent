@@ -209,7 +209,7 @@ def setup_staff_requirement_for_shift_scheduling() -> str:
          str: 操作結果訊息，例如 "內外場最低人數需求設定成功" 或錯誤訊息。
     """
 
-    if solver_manager.shifts_start_ends == None:
+    if solver_manager.shifts_start_ends is None:
         return "請先設定班別班次(setup_shifts_for_shift_scheduling)，才能設定內外場最低人數需求."
 
     # user_dict = config["configurable"]["langgraph_auth_user"]
@@ -294,7 +294,7 @@ def initialize_ortools() -> str:
         str: 初始設定結果訊息，例如 "初始化成功" 或錯誤訊息。
     """
 
-    status, init_ok = solver_manager.init()
+    status, _ = solver_manager.init()
 
     return status
 
@@ -308,32 +308,9 @@ def add_general_constraints() -> str:
         str: 操作結果訊息，例如 "約束條件設定成功" 或錯誤訊息。
     """
 
-    # solver_manager.add_general_constraints()
+    general_constraints_msg = solver_manager.add_general_constraints()
 
-    return "排班最佳化工具的一般性約束條件設定成功."
-
-
-# @tool
-# def add_leave_requirement_constraints(
-#     leave_people: Annotated[list[Worker], "請假人員清單"],
-#     leave_days: Annotated[list[datetime], "請假日期清單"],
-# ) -> str:
-#     """
-#     新增區間內請假人員與日期的約束條件至排班最佳化工具。
-
-#     Args:
-#         leave_people (list[Worker]): 請假人員清單。
-#         leave_days (list[datetime]): 請假日期清單。
-
-#     Returns:
-#         str: 操作結果訊息，例如 "新增區間內請假人員與日期的約束條件設定成功" 或錯誤訊息。
-#     """
-
-#     solver_manager.add_leave_requirement_constraints(
-#         leave_people=leave_people, leave_days=leave_days
-#     )
-
-#     return "排班最佳化工具的區間內請假人員與日期設定成功."
+    return general_constraints_msg
 
 
 @tool
@@ -354,24 +331,25 @@ def execute_ortools_scheduling_solver() -> str:
 
     # Display the first five solutions.
     solution_printer = WorkersPartialSolutionPrinter(
-        solver_manager.shift_schedule,
-        len(solver_manager.workers),
-        len(solver_manager.dates),
-        len(solver_manager.shifts),
+        solver_manager.group_solvers["1_廚房"]["shift_schedule"],
+        len(solver_manager.group_solvers["1_廚房"]["workers_in_group"]),
+        len(solver_manager.group_solvers["1_廚房"]["all_days"]),
+        len(solver_manager.group_solvers["1_廚房"]["all_shifts"]),
         solution_limit=5,
     )
 
-    status = solver_manager.solver.solve(
-        solver_manager.model, solution_callback=solution_printer
+    status = solver_manager.group_solvers["1_廚房"]["solver"].solve(
+        solver_manager.group_solvers["1_廚房"]["model"],
+        solution_callback=solution_printer,
     )
 
     print(
         "workers: ",
-        len(solver_manager.workers),
+        len(solver_manager.group_solvers["1_廚房"]["workers_in_group"]),
         "days: ",
-        len(solver_manager.dates),
+        len(solver_manager.group_solvers["1_廚房"]["all_days"]),
         "shifts: ",
-        len(solver_manager.shifts),
+        len(solver_manager.group_solvers["1_廚房"]["all_shifts"]),
     )
 
     if status == cp_model.OPTIMAL:
