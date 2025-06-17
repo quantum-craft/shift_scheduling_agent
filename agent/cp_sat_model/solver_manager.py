@@ -31,6 +31,9 @@ class SolverManager:
     shifts_start_ends: list[time] = None
     shifts_idx: dict[str, int] = None
 
+    """Optimization related data."""
+    group_losses: dict = None
+
     def init(self) -> tuple[str, bool]:
         """Initialize group solvers and models for each group"""
 
@@ -70,8 +73,13 @@ class SolverManager:
                 all_shifts=self.all_shifts,
             )
 
+        # Init optimization related data
+        self.group_losses = {}
+        for group_name, _ in self.group_solvers.items():
+            self.group_losses[group_name] = 0
+
         return (
-            "排班最佳化工具的group models 和 solvers 初始化成功.",
+            "排班最佳化工具的group models, solvers, and optimization losses 初始化成功.",
             True,
         )
 
@@ -82,7 +90,38 @@ class SolverManager:
         self.clear_shifts()
         self.clear_workers()
         self.clear_dates()
+        self.group_losses = None
         self.group_solvers = None
+
+    def check_solver_status(self) -> tuple[str, bool]:
+        if self.workers is None:
+            return (
+                "排班最佳化工具的員工(workers)沒有設置, 此tool一定要在呼叫setup_workers_for_shift_scheduling後呼叫.",
+                False,
+            )
+
+        if self.dates is None:
+            return (
+                "排班最佳化工具的日期區間(dates)沒有設置, 此tool一定要在呼叫setup_date_interval_for_shift_scheduling後呼叫.",
+                False,
+            )
+
+        if self.shifts is None:
+            return (
+                "排班最佳化工具的班次(shifts)沒有設置, 此tool一定要在呼叫setup_shifts_for_shift_scheduling後呼叫.",
+                False,
+            )
+
+        if self.group_workers is None:
+            return (
+                "排班最佳化工具的員工群組(group_workers)沒有設置, 此tool一定要在呼叫setup_workers_for_shift_scheduling後呼叫.",
+                False,
+            )
+
+        return (
+            "排班最佳化工具的資料(workers, days, shifts, and group_workers)都設置成功",
+            True,
+        )
 
     def set_dates(
         self, dates: list[date], all_days: range, dates_indices_map: dict[str, int]
@@ -239,33 +278,3 @@ class SolverManager:
             return f"排班最佳化工具的一般性約束條件設定失敗, 錯誤訊息: {e}"
 
         return "排班最佳化工具的一般性約束條件設定成功."
-
-    def check_solver_status(self) -> tuple[str, bool]:
-        if self.workers is None:
-            return (
-                "排班最佳化工具的員工(workers)沒有設置, 此tool一定要在呼叫setup_workers_for_shift_scheduling後呼叫.",
-                False,
-            )
-
-        if self.dates is None:
-            return (
-                "排班最佳化工具的日期區間(dates)沒有設置, 此tool一定要在呼叫setup_date_interval_for_shift_scheduling後呼叫.",
-                False,
-            )
-
-        if self.shifts is None:
-            return (
-                "排班最佳化工具的班次(shifts)沒有設置, 此tool一定要在呼叫setup_shifts_for_shift_scheduling後呼叫.",
-                False,
-            )
-
-        if self.group_workers is None:
-            return (
-                "排班最佳化工具的員工群組(group_workers)沒有設置, 此tool一定要在呼叫setup_workers_for_shift_scheduling後呼叫.",
-                False,
-            )
-
-        return (
-            "排班最佳化工具的資料(workers, days, shifts, and group_workers)都設置成功",
-            True,
-        )
