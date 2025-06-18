@@ -1,4 +1,4 @@
-"""HRM 的 員工套用班別相關 API"""
+"""HRM 的 員工薪資相關 API"""
 
 import httpx
 from typing import List, Optional
