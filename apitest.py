@@ -12,6 +12,7 @@ from hrm.webapi.unified.shiftschedule import shiftschedule as shiftschedule_api
 from hrm.webapi.unified.shiftschedule import cycles as shiftschedulecycle_api
 from hrm.webapi.unified.employeeschedulingrulesettings import shifts as employeeshift_api
 from hrm.webapi.unified.holidays.employees import remaining as employeeholidayremaining_api
+from hrm.webapi.unified.salaries import employees as employeesalaries_api
 
 if __name__ == "__main__":
     async def main():
@@ -26,6 +27,6 @@ if __name__ == "__main__":
         # print(f"shiftschedule_api.get_shiftschedules {await shiftschedule_api.get_shiftschedules(token,[ UUID('58244e12-47a3-4473-80cb-4e48daeb8c74')])}")
         # print(f"shiftschedulecycle_api.get_cycles {await shiftschedulecycle_api.get_cycles(token,[ UUID('58244e12-47a3-4473-80cb-4e48daeb8c74')])}")
         # print(f"employeeshift_api.get_employee_shifts {await employeeshift_api.get_employee_shifts(token,[UUID('7e9817f6-44d5-4836-a204-1116481d76fc')],'2025-05-29','2025-05-29')}")
-        print(f"employeeholidayremaining_api.get_employee_shifts {await employeeholidayremaining_api.get_remainings(token,[UUID('7e9817f6-44d5-4836-a204-1116481d76fc')],'2025-05-29','2025-05-29')}")
-
+        # print(f"employeeholidayremaining_api.get_employee_shifts {await employeeholidayremaining_api.get_remainings(token,[UUID('7e9817f6-44d5-4836-a204-1116481d76fc')],'2025-05-29','2025-05-29')}")
+        print(f"employeesalaries_api.get_employee_salaries {await employeesalaries_api.get_employee_salaries(token,[UUID('7e9817f6-44d5-4836-a204-1116481d76fc')],'2025-05-27','2025-05-29')}")
     asyncio.run(main())
