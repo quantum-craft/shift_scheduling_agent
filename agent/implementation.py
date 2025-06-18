@@ -33,7 +33,19 @@ def node_shift_scheduling_agent(state: AgentState, config: RunnableConfig) -> di
 
     response = model.invoke(messages)
 
-    return {"messages": [response]}
+    prepend_message = (
+        AIMessage(content="", whisper="排班成功, 請幫我刷新網頁")
+        if (
+            isinstance(messages[-1], ToolMessage)
+            and messages[-1].name == "execute_ortools_scheduling_group_solvers"
+            and messages[-1].status == "success"
+        )
+        else None
+    )
+
+    ret_messages = [prepend_message, response] if prepend_message else [response]
+
+    return {"messages": ret_messages}
 
 
 node_shift_scheduling_tools = ToolNode(shift_scheduling_tool_list)
