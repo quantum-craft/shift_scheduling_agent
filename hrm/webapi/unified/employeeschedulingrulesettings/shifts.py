@@ -35,7 +35,7 @@ async def get_employee_shifts(token: str, ids: Optional[List[UUID]], startDate: 
         base_url = get_hrm_tool_full_endpoint(
             "api/employee-scheduling-rule-settings/shifts")
 
-        date_condition = f"?startDate={startDate}&endDate={endDate}"
+        date_condition = f"startDate={startDate}&endDate={endDate}"
         if ids:
             query = "&".join([f"ids={str(i)}" for i in ids])
             full_url = f"{base_url}?{date_condition}&{query}"
