@@ -8,7 +8,9 @@ from datetime import datetime
 from datetime import time
 from datetime import date
 from datetime import timedelta
+from tabulate import tabulate
 from agent.cp_sat_model.solver_manager import SolverManager
+from agent.cp_sat_model.group_solver import GroupSolver
 from ortools.sat.python import cp_model
 from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
 
@@ -85,6 +87,115 @@ def map_model_status(code: int) -> str:
         return "UNKNOWN"
     else:
         raise ValueError(f"Unknown status code: {code}")
+
+
+def solution_table_rows(
+    workers: list[str],
+    workers_dict: dict,
+    dates: list[date],
+    shifts: list,
+    work_days: dict,
+    group_solver: GroupSolver,
+):
+    rows = []
+    workers_in_group = group_solver["workers_in_group"]
+    group_name = group_solver["group_name"]
+    solver = group_solver["solver"]
+    shift_schedule = group_solver["shift_schedule"]
+
+    shifts_mark = {}
+    for w, _ in enumerate(workers_in_group):
+        for d in range(len(dates)):
+            shifts_mark[(w, d)] = " "
+
+    for w, worker_idx in enumerate(workers_in_group):
+        for d in range(len(dates)):
+            for s in range(len(shifts)):
+                if solver.value(shift_schedule[(w, d, s)]) == 1:
+                    marks = shifts[s]["name"].split("_")
+                    marks = f"{marks[0]}\n{marks[1]}\n-{marks[2]}"
+                    shifts_mark[(w, d)] = marks
+
+    for w, worker_idx in enumerate(workers_in_group):
+        worker_name = workers[worker_idx]
+
+        emp_type = (
+            "Full Time"
+            if workers_dict[worker_name]["employment_type"] == "FT"
+            else "Part Time"
+        )
+
+        worker_string = f"{worker_name}\n{group_name}\n({emp_type})"
+
+        row = (
+            [worker_string]
+            + [shifts_mark[(w, d)] for d, _ in enumerate(dates)]
+            + [f"{work_days[worker_name]} / {len(dates) - work_days[worker_name]}"]
+        )
+        rows.append(row)
+
+    return rows
+
+
+def calculate_work_days(
+    workers: list[str],
+    all_days: list[int],
+    all_shifts: list[int],
+    group_solver: GroupSolver,
+):
+    solver = group_solver["solver"]
+    shift_schedule = group_solver["shift_schedule"]
+    workers_in_group = group_solver["workers_in_group"]
+
+    work_days_out = {}
+    for w, worker_idx in enumerate(workers_in_group):
+        work_days = sum(
+            solver.value(shift_schedule[(w, d, s)])
+            for d in all_days
+            for s in all_shifts
+        )
+
+        work_days_out[workers[worker_idx]] = work_days
+
+    return work_days_out
+
+
+def print_solution(solver_manager: SolverManager):
+    headers = (
+        ["Employee"]
+        + [d.strftime("%d\n%a") for d in solver_manager.dates]
+        + ["Work / Off"]
+    )
+    rows = []
+    for group_name, group_solver in solver_manager.group_solvers.items():
+        group_status = group_solver["solver_status"]
+        if group_status == cp_model.OPTIMAL or group_status == cp_model.FEASIBLE:
+            print(f"Group {group_name}: {map_model_status(group_status)}")
+
+            work_days = calculate_work_days(
+                workers=solver_manager.workers,
+                all_days=solver_manager.all_days,
+                all_shifts=solver_manager.all_shifts,
+                group_solver=group_solver,
+            )
+
+            rows.append(
+                solution_table_rows(
+                    workers=solver_manager.workers,
+                    workers_dict=solver_manager.workers_dict,
+                    dates=solver_manager.dates,
+                    shifts=solver_manager.shifts,
+                    work_days=work_days,
+                    group_solver=group_solver,
+                )
+            )
+
+        else:
+            print(f"Group {group_name}: {map_model_status(group_status)}")
+
+    rows = [rows[i][j] for i in range(len(rows)) for j in range(len(rows[i]))]
+
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
 
 
 @tool
@@ -401,6 +512,8 @@ def execute_ortools_scheduling_group_solvers() -> str:
         group_status_str = map_model_status(group_status)
 
         return_str.append(f"Group {group_name} status: {group_status_str}")
+
+    print_solution(solver_manager)
 
     return "\n".join(return_str)
 
