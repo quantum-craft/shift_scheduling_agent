@@ -46,7 +46,7 @@ async def get_employee_shifts(token: str, ids: Optional[List[UUID]], startDate: 
         if response.status_code != HTTPStatus.OK:
             print(f"請求失敗，狀態碼: {response.status_code}")
             response.raise_for_status()
-        print(response.json())
+        # print(response.json())
         response_model = WebAPIResponse[List[EmployeeShiftAssignmentViewModel]](
             **response.json())
         return response_model

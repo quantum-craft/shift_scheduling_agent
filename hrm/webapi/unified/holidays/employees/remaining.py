@@ -59,12 +59,12 @@ async def get_remainings(token: str, ids: Optional[List[UUID]], startDate: str, 
             full_url = f"{base_url}?{date_condition}&{query}"
         else:
             full_url = f"{base_url}?{query}"
-        print(full_url)
+        # print(full_url)
         response = await client.get(full_url, headers=my_headers)
         if response.status_code != HTTPStatus.OK:
             print(f"請求失敗，狀態碼: {response.status_code}")
             response.raise_for_status()
-        print(response.json())
+        # print(response.json())
         response_model = WebAPIResponse[List[EmployeeRemainingHolidayViewModel]](
             **response.json())
         return response_model
