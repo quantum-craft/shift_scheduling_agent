@@ -21,6 +21,6 @@ if __name__ == "__main__":
         # print(f"groups.get_custom_group_info {await customgroupemp_api.get_employees_info(token)}")
         # print(f"groupreq_api.get_requirements {await groupreq_api.get_requirements(token)}")
         # print(f"shifts_api.get_shifts {await shifts_api.get_shifts(token,[ UUID('214ff328-eb67-4548-a298-1cc4665c810b')])}")
-        print(f"shiftschedule_api.get_shiftschedules {await shiftschedule_api.get_shiftschedules(token,[ UUID('58244e12-47a3-4473-80cb-4e48daeb8c74')])}")
-        # print(f"shiftschedulecycles_api.get_cycles {await shiftschedulecycles_api.get_cycles(token,[ UUID('58244e12-47a3-4473-80cb-4e48daeb8c74')])}")
+        # print(f"shiftschedule_api.get_shiftschedules {await shiftschedule_api.get_shiftschedules(token,[ UUID('58244e12-47a3-4473-80cb-4e48daeb8c74')])}")
+        print(f"shiftschedulecycles_api.get_cycles {await shiftschedulecycles_api.get_cycles(token,[ UUID('58244e12-47a3-4473-80cb-4e48daeb8c74')])}")
     asyncio.run(main())
