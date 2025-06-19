@@ -1,6 +1,7 @@
 from ortools.sat.python import cp_model
 from dateutil import parser
 from datetime import date, time
+from models.worker import Worker, Group
 from agent.cp_sat_model.group_solver import GroupSolver
 from agent.cp_sat_model.constraints import worker_shift_constraint
 from agent.cp_sat_model.constraints import one_day_one_shift_constraint
@@ -25,6 +26,7 @@ class SolverManager:
     workers_dict: dict = None
     group_workers: dict = None
     group_workers_idx: dict = None
+    workers_id_to_name: dict[str, str] = None
 
     """Shift related data."""
     shifts: list[dict] = None
@@ -154,9 +156,9 @@ class SolverManager:
         self,
         workers: list[str],
         all_workers: range,
-        workers_dict: dict,
-        group_workers: dict,
-        group_workers_idx: dict,
+        workers_dict: dict[str, Worker],
+        group_workers: dict[Group, list[int]],
+        group_workers_idx: dict[Group, dict[int, int]],
     ) -> str:
         """Set workers, all_workers, and workers_dict for the scheduling tool(ortools)"""
 
@@ -166,6 +168,7 @@ class SolverManager:
             self.workers_dict = workers_dict
             self.group_workers = group_workers
             self.group_workers_idx = group_workers_idx
+            self.workers_id_to_name = {v.id: v.name for _, v in workers_dict.items()}
         except Exception as e:
             return f"排班最佳化工具的員工設定失敗, 錯誤訊息: {e}"
 
@@ -180,6 +183,7 @@ class SolverManager:
             self.workers_dict = None
             self.group_workers = None
             self.group_workers_idx = None
+            self.workers_id_to_name = None
         except Exception as e:
             return f"排班最佳化工具的員工清除失敗, 錯誤訊息: {e}"
 
@@ -296,9 +300,9 @@ class SolverManager:
 
     def add_worker_day_off_requests_optimization(self, day_off_requests: dict) -> str:
         try:
-            for kv in day_off_requests.items():
-                self.workers_dict[kv[0]]["day_off_requests"] = [
-                    parser.parse(date_str).date() for date_str in kv[1]
+            for k, v in day_off_requests.items():
+                self.workers_dict[k].day_off_requests = [
+                    parser.parse(date_str).date() for date_str in v
                 ]
 
             for group_name, group_solver in self.group_solvers.items():

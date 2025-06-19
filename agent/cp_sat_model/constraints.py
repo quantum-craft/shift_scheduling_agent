@@ -29,7 +29,7 @@ def worker_shift_constraint(
 
     for _, group_solver in group_solvers.items():
         for w, worker_idx in enumerate(group_solver["workers_in_group"]):
-            emp_type = workers_dict[workers[worker_idx]]["employment_type"]
+            emp_type = workers_dict[workers[worker_idx]].employment_type
             if emp_type == "FT":
                 for d in all_days:
                     for s in all_shifts:

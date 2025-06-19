@@ -16,7 +16,7 @@ def day_off_request_per_group_optim_loss(
     loss = 0
     for w, worker_idx in enumerate(workers_in_group):
         worker_info = workers_dict[workers[worker_idx]]
-        for day_off_request in worker_info.get("day_off_requests", []):
+        for day_off_request in worker_info.day_off_requests:
             day_off_str = day_off_request.isoformat()
             if day_off_str not in dates_indices_map:
                 continue
