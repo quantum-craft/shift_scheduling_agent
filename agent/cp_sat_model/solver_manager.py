@@ -14,7 +14,7 @@ from agent.cp_sat_model.optimizations import day_off_request_per_group_optim_los
 class SolverManager:
     """Manages OR-Tools solver operations and state."""
 
-    group_solvers: dict[str, GroupSolver] = None
+    group_solvers: dict[Group, GroupSolver] = None
 
     """Date related data."""
     dates: list[date] = None
