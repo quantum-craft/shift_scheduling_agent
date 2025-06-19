@@ -5,7 +5,6 @@ This file provides a placeholder implementation for the corresponding stub.
 Replace the placeholder implementation with your own logic.
 """
 
-from typing_extensions import TypedDict
 from agent.stub import CustomAgent
 from agent.state import AgentState
 from agent.config import AgentConfig
@@ -77,22 +76,3 @@ agent = CustomAgent(
 
 
 compiled_agent = agent.compile()
-
-
-# Test codes
-# if __name__ == "__main__":
-# config = {
-#     "configurable": {
-#         # "general_model": "OpenAI-GPT-4o",
-#         # "general_agent_system_prompt": "請以繁體中文回答",
-#     }
-# }
-
-# for chunk in compiled_agent.stream(
-#     {
-#         "messages": [HumanMessage(content="排六月的班表")],
-#     },
-#     # config=config,
-#     stream_mode="values",
-# ):
-#     chunk["messages"][-1].pretty_print()
