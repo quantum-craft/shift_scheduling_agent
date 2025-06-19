@@ -33,14 +33,14 @@ def worker_shift_constraint(
             if emp_type == "FT":
                 for d in all_days:
                     for s in all_shifts:
-                        if shifts[s]["employment_type"] != "FT":
+                        if shifts[s].employment_type != "FT":
                             group_solver["model"].add(
                                 group_solver["shift_schedule"][(w, d, s)] == 0
                             )
             elif emp_type == "PT":
                 for d in all_days:
                     for s in all_shifts:
-                        if shifts[s]["employment_type"] != "PT":
+                        if shifts[s].employment_type != "PT":
                             group_solver["model"].add(
                                 group_solver["shift_schedule"][(w, d, s)] == 0
                             )

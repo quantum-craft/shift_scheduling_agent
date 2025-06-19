@@ -13,6 +13,7 @@ from agent.cp_sat_model.solver_manager import SolverManager
 from agent.cp_sat_model.group_solver import GroupSolver
 from ortools.sat.python import cp_model
 from models.worker import Worker, Group, PaymentType, EmploymentType
+from models.shift import Shift
 
 
 # TODO: handle multiple solver_manager instances and their life cycles for concurrent requests
@@ -113,7 +114,7 @@ def solution_table_rows(
         for d in range(len(dates)):
             for s in range(len(shifts)):
                 if solver.value(shift_schedule[(w, d, s)]) == 1:
-                    marks = shifts[s]["name"].split("_")
+                    marks = shifts[s].name.split("_")
                     marks = f"{marks[0]}\n{marks[1]}\n-{marks[2]}"
                     shifts_mark[(w, d)] = marks
 
@@ -321,23 +322,27 @@ def setup_shifts_for_shift_scheduling() -> str:
     with open(Path("local_data/shifts_MAY.json"), "r", encoding="utf-8") as f:
         json_dict = json.load(f)
 
-    shifts = copy.deepcopy(json_dict)
+    shifts_json = copy.deepcopy(json_dict)
+
+    # shifts 是 list[班次id, Shift]
+    shifts: list[Shift] = [Shift.model_validate(v) for v in shifts_json]
+
     all_shifts = range(len(shifts))
     shifts_start_ends = [
         (
-            time_str_to_time(shift["shift_start_time"], "start"),
-            time_str_to_time(shift["shift_end_time"], "end"),
+            shift.shift_start_time,
+            shift.shift_end_time,
         )
         for shift in shifts
     ]
 
-    shifts_idx = {s["name"]: i for i, s in enumerate(shifts)}
+    # shifts_idx = {s.id: i for i, s in enumerate(shifts)}
 
     set_shifts_msg = solver_manager.set_shifts(
         shifts=shifts,
         all_shifts=all_shifts,
         shifts_start_ends=shifts_start_ends,
-        shifts_idx=shifts_idx,
+        # shifts_idx=shifts_idx,
     )
 
     return set_shifts_msg

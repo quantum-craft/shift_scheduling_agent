@@ -8,9 +8,5 @@
   "http": {
     "app": "./webapi/webapp.py:app"
   },
-  "developer_comment": "Add custom auth by adding key: \"auth\": {\"path\": \"./security/auth.py:auth\",\"disable_studio_auth\": \"true\"}",
-  "auth": {
-    "path": "./security/auth.py:auth",
-    "disable_studio_auth": "false"
-  }
+  "developer_comment": "Add custom auth by adding key: \"auth\": {\"path\": \"./security/auth.py:auth\",\"disable_studio_auth\": \"true\"}"
 }

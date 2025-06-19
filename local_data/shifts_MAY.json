@@ -1,6 +1,7 @@
 [
     {
         "name": "FT_1000_1900",
+        "id": "3db5a3c4-5601-47c1-9cbe-7644d3276c7a",
         "employment_type": "FT",
         "shift_start_time": "10:00",
         "shift_end_time": "19:00",
@@ -9,6 +10,7 @@
     },
     {
         "name": "FT_1000_2000",
+        "id": "bf811fad-ec66-4b08-84ce-23380e0bc208",
         "employment_type": "FT",
         "shift_start_time": "10:00",
         "shift_end_time": "20:00",
@@ -17,6 +19,7 @@
     },
     {
         "name": "FT_0800_1700",
+        "id": "7392c991-1a2e-4d06-89b1-106948eb52f1",
         "employment_type": "FT",
         "shift_start_time": "08:00",
         "shift_end_time": "17:00",
@@ -25,6 +28,7 @@
     },
     {
         "name": "FT_1100_2000",
+        "id": "66f4ae21-1e3e-4061-9676-7b8da9c530e6",
         "employment_type": "FT",
         "shift_start_time": "11:00",
         "shift_end_time": "20:00",
@@ -33,6 +37,7 @@
     },
     {
         "name": "FT_1100_1600",
+        "id": "2fec53c7-3538-459d-b79a-4f12978be81e",
         "employment_type": "FT",
         "shift_start_time": "11:00",
         "shift_end_time": "16:00",
@@ -41,6 +46,7 @@
     },
     {
         "name": "FT_0900_1800",
+        "id": "1f0e8705-27c6-4124-99ab-b79831c5627b",
         "employment_type": "FT",
         "shift_start_time": "09:00",
         "shift_end_time": "18:00",
@@ -49,6 +55,7 @@
     },
     {
         "name": "FT_1300_2200",
+        "id": "715834a8-f460-4327-b2b7-f84d22ed74c0",
         "employment_type": "FT",
         "shift_start_time": "13:00",
         "shift_end_time": "22:00",
@@ -57,6 +64,7 @@
     },
     {
         "name": "FT_1400_2300",
+        "id": "1906c60e-bb94-42bb-8a82-8e7a9cb87997",
         "employment_type": "FT",
         "shift_start_time": "14:00",
         "shift_end_time": "23:00",
@@ -65,6 +73,7 @@
     },
     {
         "name": "FT_1600_0100",
+        "id": "0a320272-a1be-4328-9424-a332b3defc66",
         "employment_type": "FT",
         "shift_start_time": "16:00",
         "shift_end_time": "01:00",
@@ -73,6 +82,7 @@
     },
     {
         "name": "FT_1400_1800",
+        "id": "842669af-7f01-4198-a9c2-9cf5e411a8a6",
         "employment_type": "FT",
         "shift_start_time": "14:00",
         "shift_end_time": "18:00",
@@ -81,6 +91,7 @@
     },
     {
         "name": "FT_1400_1730",
+        "id": "c84f804c-4906-4392-91de-d61930140bfb",
         "employment_type": "FT",
         "shift_start_time": "14:00",
         "shift_end_time": "17:30",
@@ -89,6 +100,7 @@
     },
     {
         "name": "PT_1100_1700",
+        "id": "cbe30dfe-b80f-465c-a0c6-75b89f20594c",
         "employment_type": "PT",
         "shift_start_time": "11:00",
         "shift_end_time": "17:00",
@@ -97,6 +109,7 @@
     },
     {
         "name": "PT_0800_1700",
+        "id": "77d570e7-4603-49ae-96f6-51cd9480ddf1",
         "employment_type": "PT",
         "shift_start_time": "08:00",
         "shift_end_time": "17:00",
@@ -105,6 +118,7 @@
     },
     {
         "name": "PT_0800_1400",
+        "id": "bc392074-5c1b-4892-ae94-315a0b41eaf5",
         "employment_type": "PT",
         "shift_start_time": "08:00",
         "shift_end_time": "14:00",
@@ -113,6 +127,7 @@
     },
     {
         "name": "PT_1800_2200",
+        "id": "4612f200-7c4b-4a60-a9fc-a38c20bf279a",
         "employment_type": "PT",
         "shift_start_time": "18:00",
         "shift_end_time": "22:00",
@@ -121,6 +136,7 @@
     },
     {
         "name": "PT_1000_1400",
+        "id": "737ee3cb-9aed-4686-80ba-ad7d18afa433",
         "employment_type": "PT",
         "shift_start_time": "10:00",
         "shift_end_time": "14:00",
@@ -129,6 +145,7 @@
     },
     {
         "name": "PT_1200_1700",
+        "id": "2e6bf9d2-5bec-4045-b73e-09d29d63f757",
         "employment_type": "PT",
         "shift_start_time": "12:00",
         "shift_end_time": "17:00",
@@ -137,6 +154,7 @@
     },
     {
         "name": "PT_1100_1500",
+        "id": "50df5ba6-754c-4c8b-8dbb-a4372e978990",
         "employment_type": "PT",
         "shift_start_time": "11:00",
         "shift_end_time": "15:00",
@@ -145,6 +163,7 @@
     },
     {
         "name": "PT_1000_1500",
+        "id": "a45445f3-c5b3-4f14-8f6a-4052d8eefc29",
         "employment_type": "PT",
         "shift_start_time": "10:00",
         "shift_end_time": "15:00",
@@ -153,6 +172,7 @@
     },
     {
         "name": "PT_1100_1600",
+        "id": "d8e2058c-e241-4867-9968-8c9421691385",
         "employment_type": "PT",
         "shift_start_time": "11:00",
         "shift_end_time": "16:00",
@@ -161,6 +181,7 @@
     },
     {
         "name": "PT_1100_1800",
+        "id": "33fe9073-d64d-4672-8eb7-ef7998a30e7a",
         "employment_type": "PT",
         "shift_start_time": "11:00",
         "shift_end_time": "18:00",
@@ -169,6 +190,7 @@
     },
     {
         "name": "PT_1300_1700",
+        "id": "8467fa00-7558-45f6-ac1a-4214310ba6ac",
         "employment_type": "PT",
         "shift_start_time": "13:00",
         "shift_end_time": "17:00",
@@ -177,6 +199,7 @@
     },
     {
         "name": "PT_1400_2300",
+        "id": "e79ac081-41bb-43d2-9c25-1e75ce5c96fc",
         "employment_type": "PT",
         "shift_start_time": "14:00",
         "shift_end_time": "23:00",
@@ -185,6 +208,7 @@
     },
     {
         "name": "PT_1300_1800",
+        "id": "84d6fdab-06da-45ec-8320-1584f80dbaba",
         "employment_type": "PT",
         "shift_start_time": "13:00",
         "shift_end_time": "18:00",
@@ -193,6 +217,7 @@
     },
     {
         "name": "PT_1200_2100",
+        "id": "405a0984-a554-4d9c-80a0-507c1c2eb2a1",
         "employment_type": "PT",
         "shift_start_time": "12:00",
         "shift_end_time": "21:00",
@@ -201,6 +226,7 @@
     },
     {
         "name": "PT_1200_1800",
+        "id": "328ea56e-a724-43a1-bfb1-635b09841c20",
         "employment_type": "PT",
         "shift_start_time": "12:00",
         "shift_end_time": "18:00",
@@ -209,6 +235,7 @@
     },
     {
         "name": "PT_1800_2300",
+        "id": "6069d6b2-43f0-4cee-b797-70766ba02a96",
         "employment_type": "PT",
         "shift_start_time": "18:00",
         "shift_end_time": "23:00",
@@ -217,6 +244,7 @@
     },
     {
         "name": "PT_2000_2200",
+        "id": "c5ef20ff-f197-4757-b6e5-38a7e8ab4011",
         "employment_type": "PT",
         "shift_start_time": "20:00",
         "shift_end_time": "22:00",
@@ -225,6 +253,7 @@
     },
     {
         "name": "PT_1700_2300",
+        "id": "d5933f26-9496-4213-8edd-3a4dcc6deb29",
         "employment_type": "PT",
         "shift_start_time": "17:00",
         "shift_end_time": "23:00",
@@ -233,6 +262,7 @@
     },
     {
         "name": "PT_1830_2300",
+        "id": "c73aa880-58cf-4c15-83a9-dc228aad65ed",
         "employment_type": "PT",
         "shift_start_time": "18:30",
         "shift_end_time": "23:00",
@@ -241,6 +271,7 @@
     },
     {
         "name": "PT_1900_2300",
+        "id": "5f7e61bf-742a-48db-8b5e-3f753ca8fcc9",
         "employment_type": "PT",
         "shift_start_time": "19:00",
         "shift_end_time": "23:00",
@@ -249,6 +280,7 @@
     },
     {
         "name": "PT_1200_1900",
+        "id": "f987d273-c442-4113-a367-101264c23a61",
         "employment_type": "PT",
         "shift_start_time": "12:00",
         "shift_end_time": "19:00",
@@ -257,6 +289,7 @@
     },
     {
         "name": "PT_1700_2200",
+        "id": "34f6f499-a7f1-478d-9187-b0264ca5dd39",
         "employment_type": "PT",
         "shift_start_time": "17:00",
         "shift_end_time": "22:00",
