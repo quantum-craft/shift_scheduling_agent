@@ -43,7 +43,10 @@ def node_shift_scheduling_agent(state: AgentState, config: RunnableConfig) -> di
         response = response.model_copy(
             deep=True,
             update={
-                "whisper": "排班成功, 請幫我刷新網頁",
+                "command": {
+                    "type": "refresh",
+                    "payload": {},
+                },
             },
         )
 
