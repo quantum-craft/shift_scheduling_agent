@@ -16,3 +16,6 @@ uv.lock
 
 # MySQL, Chroma, ...etc.
 # databases
+
+openapi.yaml
+.vscode/

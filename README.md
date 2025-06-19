@@ -52,10 +52,38 @@ uv run langgraph up # 會 build docker image
 
 localhost:3000/docs 可以看文件
 
-## go to production todo list
+## 更新 API client 的方法
 
-服務本身
-/health api endpoint for AKS
+
+1. 產 openapi.yaml
+
+自己 build docker
+
+```bash
+git clone https://github.com/Mermade/oas-kit
+cd oas-kit/packages/swagger2openapi
+docker build -t swagger2openapi . --no-cache
+```
+
+執行
+
+```bash
+docker run --rm -v ${PWD}:/usr/src/app swagger2openapi swagger2openapi --yaml --outfile openapi.yaml https://tst-apolloxe.mayohr.com/backend/platform-bff/swagger/v1/swagger.json
+```
+
+用現成的(不建議，版本舊且很慢)
+
+```bash
+docker run --rm -v ${PWD}:/usr/src/app mermade/swagger2openapi swagger2openapi --yaml --outfile openapi.yaml https://tst-apolloxe.mayohr.com/backend/platform-bff/swagger/v1/swagger.json
+```
+
+2. 用 openapi.yaml 產 code
+
+```bash
+uv tool run openapi-python-client generate --path ./openapi.yaml --overwrite --config openapi-python-client.yaml
+```
+
+## go to production todo list
 
 服務外圍資源
 postgres db

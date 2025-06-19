@@ -5,7 +5,6 @@ This file provides a placeholder implementation for the corresponding stub.
 Replace the placeholder implementation with your own logic.
 """
 
-from typing_extensions import TypedDict
 from agent.stub import CustomAgent
 from agent.state import AgentState
 from agent.config import AgentConfig
@@ -33,7 +32,22 @@ def node_shift_scheduling_agent(state: AgentState, config: RunnableConfig) -> di
 
     response = model.invoke(messages)
 
-    return {"messages": [response]}
+    last_message = messages[-1]
+    if (
+        isinstance(last_message, ToolMessage)
+        and last_message.name == "execute_ortools_scheduling_group_solvers"
+        and last_message.status == "success"
+        and isinstance(response, AIMessage)
+        and len(response.tool_calls) == 0
+    ):
+        response = response.model_copy(
+            deep=True,
+            update={
+                "whisper": "排班成功, 請幫我刷新網頁",
+            },
+        )
+
+    return {"messages": response}
 
 
 node_shift_scheduling_tools = ToolNode(shift_scheduling_tool_list)
@@ -62,22 +76,3 @@ agent = CustomAgent(
 
 
 compiled_agent = agent.compile()
-
-
-# # Test codes
-# if __name__ == "__main__":
-#     #     config = {
-#     #         "configurable": {
-#     #             # "general_model": "OpenAI-GPT-4o",
-#     #             # "general_agent_system_prompt": "請以繁體中文回答",
-#     #         }
-#     #     }
-
-#     for chunk in compiled_agent.stream(
-#         {
-#             "messages": [HumanMessage(content="排三天的班表, 包含今天一共三天")],
-#         },
-#         # config=config,
-#         stream_mode="values",
-#     ):
-#         chunk["messages"][-1].pretty_print()
