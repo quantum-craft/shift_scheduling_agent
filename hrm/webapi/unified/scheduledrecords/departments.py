@@ -12,6 +12,7 @@ from http import HTTPStatus
 import json
 from enum import Enum
 
+
 class WorkStatusEnum(int, Enum):
     ON_DUTY = 0
     OFF_DUTY = 1
@@ -34,7 +35,8 @@ class EmployeeScheduledRecordViewModel(BaseModel):
     shiftScheduleCode: str = Field(..., description="班次代碼")
     date: datetype = Field(..., description="排班日期")
     workTime: DateTimeRange = Field(..., description="工作時間區間")
-    restTimes: Optional[List[DateTimeRange]] = Field(None, description="休息時間清單")
+    restTimes: Optional[List[DateTimeRange]] = Field(
+        None, description="休息時間清單")
 
 
 async def update_employee_schedules(token: str, records: List[EmployeeScheduledRecordViewModel]) -> WebAPIResponse[object]:
@@ -53,7 +55,8 @@ async def update_employee_schedules(token: str, records: List[EmployeeScheduledR
             "Content-Type": "application/json"
         }
 
-        base_url = get_hrm_tool_full_endpoint("api/scheduled-records/departments")
+        base_url = get_hrm_tool_full_endpoint(
+            "api/scheduled-records/departments")
 
         # 將 Pydantic 模型列表轉換為適合 JSON 序列化的字典列表。
         # Pydantic v2: record.model_dump(mode="json")
@@ -78,10 +81,11 @@ async def update_employee_schedules(token: str, records: List[EmployeeScheduledR
             # 如果 API 在成功時可能回傳空內容或非 JSON 內容
             if response.status_code == HTTPStatus.OK and not response.content:
                 # 假設成功但無特定資料回傳
-                response_data = {"isSuccess": True, "message": "Operation successful, no content returned.", "data": None, "traceId": response.headers.get("traceId")}
+                response_data = {"isSuccess": True, "message": "Operation successful, no content returned.",
+                                 "data": None, "traceId": response.headers.get("traceId")}
             else:
                 print(f"API 回應不是有效的 JSON: {response.text}")
-                raise # 或者更優雅地處理這個錯誤
+                raise  # 或者更優雅地處理這個錯誤
 
         response_model = WebAPIResponse[object](**response_data)
         return response_model

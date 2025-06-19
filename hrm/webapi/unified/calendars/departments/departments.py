@@ -42,10 +42,9 @@ async def delete_department_schedules(
         }
 
         response = await client.delete(
-            base_url, headers=my_headers , params=query_params
+            base_url, headers=my_headers, params=query_params
         )
 
         if response.status_code != HTTPStatus.OK:
             print(f"請求失敗，狀態碼: {response.status_code}, 回應內容: {response.text}")
             response.raise_for_status()
-
