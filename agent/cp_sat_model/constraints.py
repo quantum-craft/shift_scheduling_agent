@@ -1,5 +1,6 @@
 from ortools.sat.python import cp_model
 from agent.cp_sat_model.group_solver import GroupSolver
+from models.group_requirement_info import GroupRequirementInfo
 
 
 def one_day_one_shift_constraint(
@@ -50,23 +51,23 @@ def worker_shift_constraint(
 
 def staff_requirement_constraint(
     all_days: range,
-    staff_requirement: dict,
+    group_requirement_infos: list[GroupRequirementInfo],
     covering_shifts: list[list[int]],
     group_solvers: dict[str, GroupSolver],
 ):
     # 內場最低人數需求
 
-    for group_info in staff_requirement["group_infos"]:
-        group_name = group_info["group_name"]
-        for slot_idx, slot_requirement in enumerate(group_info["requirement"]):
+    for group_info in group_requirement_infos:
+        group_id = group_info.group_id
+        for slot_idx, slot_requirement in enumerate(group_info.requirement):
             if slot_requirement > 0:
                 if len(covering_shifts[slot_idx]) == 0:
                     raise ValueError(
-                        f"covering_shifts for slot_idx {slot_idx} is empty in group {group_name}"
+                        f"covering_shifts for slot_idx {slot_idx} is empty in group {group_id}"
                     )
 
                 for d in all_days:
-                    group_solver = group_solvers[group_name]
+                    group_solver = group_solvers[group_id]
                     group_solver["model"].add(
                         sum(
                             group_solver["shift_schedule"][(w, d, s)]

@@ -28,6 +28,6 @@ class Worker(BaseModel):
     pay: int = Field(description="員工薪資")
     payment_type: PaymentType = Field(description="員工薪資類型")
     employment_type: EmploymentType = Field(description="員工雇用類型")
-    group: Group = Field(description="員工工作群組")
+    group: Group = Field(description="員工工作群組, 應該為GroupID")
     workers_idx: int = Field(description="員工在員工列表中的索引", default=-1)
     day_off_requests: list[date] = Field(description="員工預排休日期", default=[])

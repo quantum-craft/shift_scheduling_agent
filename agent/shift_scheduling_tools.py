@@ -14,6 +14,7 @@ from agent.cp_sat_model.group_solver import GroupSolver
 from ortools.sat.python import cp_model
 from models.worker import Worker, Group, PaymentType, EmploymentType
 from models.shift import Shift
+from models.group_requirement_info import GroupRequirementInfo
 
 
 # TODO: handle multiple solver_manager instances and their life cycles for concurrent requests
@@ -271,6 +272,9 @@ def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
         v["id"]: Worker.model_validate(v) for k, v in dict(sorted_items).items()
     }
 
+    # 以上為API須要準備的資料: key: 員工id, value: Worker (models/worker.py)
+    # ==================================================================
+
     # workers 是 list[員工id]
     workers: list[str] = list(workers_dict.keys())
     for i in range(len(workers)):
@@ -327,6 +331,9 @@ def setup_shifts_for_shift_scheduling() -> str:
     # shifts 是 list[班次id, Shift]
     shifts: list[Shift] = [Shift.model_validate(v) for v in shifts_json]
 
+    # 以上為API須要準備的資料: list[班次id, Shift (models/shift.py)]
+    # ==========================================================
+
     all_shifts = range(len(shifts))
     shifts_start_ends = [
         (
@@ -369,23 +376,34 @@ def setup_staff_requirement_for_shift_scheduling() -> str:
     with open(Path("local_data/staff_requirement.json"), "r", encoding="utf-8") as f:
         staff_requirement = json.load(f)
 
-    # Add more time slots to fit actual MAY schedule, this is a fake data for testing
-    staff_requirement["time_slots"].extend(
-        [["00:00", "01:00"], ["01:00", "02:00"], ["02:00", "03:00"], ["03:00", "04:00"]]
-    )
-    for gi in staff_requirement["group_infos"]:
-        gi["requirement"].extend([0, 0, 0, 0])
-
-    time_slots = staff_requirement["time_slots"]
-
     time_slots_start_ends = [
         (time_str_to_time(time_slot[0], "start"), time_str_to_time(time_slot[1], "end"))
-        for time_slot in time_slots
+        for time_slot in staff_requirement["time_slots"]
     ]
 
-    time_slots_start_ends_converted = convert_start_end_list(time_slots_start_ends)
+    time_slots_start_ends_converted: list[tuple[datetime, datetime]] = (
+        convert_start_end_list(time_slots_start_ends)
+    )
 
-    covering_shifts = []
+    group_requirement_infos: list[GroupRequirementInfo] = []
+    for group_info in staff_requirement["group_infos"]:
+        group_requirement_infos.append(
+            GroupRequirementInfo(
+                group_id=group_info["group_name"],
+                group_name="",  # optional, 用GroupID來做查詢依據
+                requirement=group_info["requirement"],
+            )
+        )
+
+    # 以上為API須要準備的資料:
+    # time_slots_start_ends_converted: list[tuple[datetime, datetime]]:
+    # 群組最低需求的list[timeRange], 使用datetime是為了跨午夜後多加一天, 讓大小比較正確
+
+    # group_requirement_infos: list[GroupRequirementInfo]
+    # list[GroupRequirementInfo]
+    # ==================================================================
+
+    covering_shifts: list[list[int]] = []
     for (
         time_slot_start_converted,
         time_slot_end_converted,
@@ -407,28 +425,10 @@ def setup_staff_requirement_for_shift_scheduling() -> str:
 
         covering_shifts.append(covering_shift)
 
-    # Error check:
-    # Check group requirement length is equal to time_slots length
-    for group_info in staff_requirement["group_infos"]:
-        a = group_info["requirement"]
-        b = covering_shifts
-        group_name = group_info["group_name"]
-
-        if (
-            check_requirement_length(
-                a=a,
-                b=b,
-                group_name=group_name,
-            )
-            == False
-        ):
-            return f"Group {group_name}'s requirement length mismatch: {len(a)} != {len(b)}"
-
     set_staff_requirement_msg = solver_manager.set_staff_requirement(
-        staff_requirement=staff_requirement,
-        time_slots=time_slots,
-        time_slots_start_ends=time_slots_start_ends,
+        group_requirement_infos=group_requirement_infos,
         covering_shifts=covering_shifts,
+        time_slots_start_ends_converted=time_slots_start_ends_converted,
     )
 
     return set_staff_requirement_msg

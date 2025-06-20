@@ -1,8 +1,9 @@
 from ortools.sat.python import cp_model
 from dateutil import parser
-from datetime import date, time
+from datetime import date, time, datetime
 from models.worker import Worker, Group
 from models.shift import Shift
+from models.group_requirement_info import GroupRequirementInfo
 from agent.cp_sat_model.group_solver import GroupSolver
 from agent.cp_sat_model.constraints import worker_shift_constraint
 from agent.cp_sat_model.constraints import one_day_one_shift_constraint
@@ -34,6 +35,11 @@ class SolverManager:
     all_shifts: range = None
     shifts_start_ends: list[tuple[time, time]] = None
     # shifts_idx: dict[str, int] = None
+
+    """Staff requirement related data."""
+    group_requirement_infos: list[GroupRequirementInfo] = None
+    covering_shifts: list[list[int]] = None
+    time_slots_start_ends_converted: list[tuple[datetime, datetime]] = None
 
     """Optimization related data."""
     group_losses: dict = None
@@ -224,18 +230,16 @@ class SolverManager:
 
     def set_staff_requirement(
         self,
-        staff_requirement: dict,
-        time_slots: list[list],
-        time_slots_start_ends: list[tuple],
-        covering_shifts: list[list],
+        group_requirement_infos: list[GroupRequirementInfo],
+        covering_shifts: list[list[int]],
+        time_slots_start_ends_converted: list[tuple[datetime, datetime]],
     ) -> str:
         """Set staff_requirement, time_slots, time_slots_start_ends, and covering_shifts for the scheduling tool(ortools)"""
 
         try:
-            self.staff_requirement = staff_requirement
-            self.time_slots = time_slots
-            self.time_slots_start_ends = time_slots_start_ends
+            self.group_requirement_infos = group_requirement_infos
             self.covering_shifts = covering_shifts
+            self.time_slots_start_ends_converted = time_slots_start_ends_converted
         except Exception as e:
             return f"排班最佳化工具的內外場最低人數需求設定失敗, 錯誤訊息: {e}"
 
@@ -245,10 +249,9 @@ class SolverManager:
         """Clear staff_requirement, time_slots, time_slots_start_ends, and covering_shifts and let the scheduling tool(ortools) understand it need to reset data."""
 
         try:
-            self.staff_requirement = None
-            self.time_slots = None
-            self.time_slots_start_ends = None
+            self.group_requirement_infos = None
             self.covering_shifts = None
+            self.time_slots_start_ends_converted = None
         except Exception as e:
             return f"排班最佳化工具的內外場最低人數需求清除失敗, 錯誤訊息: {e}"
 
@@ -276,7 +279,7 @@ class SolverManager:
             # 符合內場最低人數需求
             staff_requirement_constraint(
                 all_days=self.all_days,
-                staff_requirement=self.staff_requirement,
+                group_requirement_infos=self.group_requirement_infos,
                 covering_shifts=self.covering_shifts,
                 group_solvers=self.group_solvers,
             )
