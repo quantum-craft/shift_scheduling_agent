@@ -1,10 +1,11 @@
 from typing import TypedDict
 from ortools.sat import cp_model_pb2
 from ortools.sat.python import cp_model
+from models.worker import Group
 
 
 class GroupSolver(TypedDict):
-    group_name: str
+    group_name: Group
     model: cp_model.CpModel
     solver: cp_model.CpSolver
     solver_status: cp_model_pb2.CpSolverStatus

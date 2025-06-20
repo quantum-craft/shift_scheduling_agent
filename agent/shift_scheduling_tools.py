@@ -12,7 +12,8 @@ from tabulate import tabulate
 from agent.cp_sat_model.solver_manager import SolverManager
 from agent.cp_sat_model.group_solver import GroupSolver
 from ortools.sat.python import cp_model
-from agent.cp_sat_model.solution_output import WorkersPartialSolutionPrinter
+from models.worker import Worker, Group, PaymentType, EmploymentType
+from models.shift import Shift
 
 
 # TODO: handle multiple solver_manager instances and their life cycles for concurrent requests
@@ -92,6 +93,7 @@ def map_model_status(code: int) -> str:
 def solution_table_rows(
     workers: list[str],
     workers_dict: dict,
+    workers_id_to_name: dict[str, str],
     dates: list[date],
     shifts: list,
     work_days: dict,
@@ -99,7 +101,7 @@ def solution_table_rows(
 ):
     rows = []
     workers_in_group = group_solver["workers_in_group"]
-    group_name = group_solver["group_name"]
+    group_name = group_solver["group_name"].value
     solver = group_solver["solver"]
     shift_schedule = group_solver["shift_schedule"]
 
@@ -112,25 +114,25 @@ def solution_table_rows(
         for d in range(len(dates)):
             for s in range(len(shifts)):
                 if solver.value(shift_schedule[(w, d, s)]) == 1:
-                    marks = shifts[s]["name"].split("_")
+                    marks = shifts[s].name.split("_")
                     marks = f"{marks[0]}\n{marks[1]}\n-{marks[2]}"
                     shifts_mark[(w, d)] = marks
 
     for w, worker_idx in enumerate(workers_in_group):
-        worker_name = workers[worker_idx]
+        worker_uuid = workers[worker_idx]
 
         emp_type = (
             "Full Time"
-            if workers_dict[worker_name]["employment_type"] == "FT"
+            if workers_dict[worker_uuid].employment_type == "FT"
             else "Part Time"
         )
 
-        worker_string = f"{worker_name}\n{group_name}\n({emp_type})"
+        worker_string = f"{workers_id_to_name[worker_uuid]}\n{group_name}\n({emp_type})"
 
         row = (
             [worker_string]
             + [shifts_mark[(w, d)] for d, _ in enumerate(dates)]
-            + [f"{work_days[worker_name]} / {len(dates) - work_days[worker_name]}"]
+            + [f"{work_days[worker_uuid]} / {len(dates) - work_days[worker_uuid]}"]
         )
         rows.append(row)
 
@@ -168,6 +170,7 @@ def print_solution(solver_manager: SolverManager):
     )
     rows = []
     for group_name, group_solver in solver_manager.group_solvers.items():
+        group_name = group_name.value
         group_status = group_solver["solver_status"]
         if group_status == cp_model.OPTIMAL or group_status == cp_model.FEASIBLE:
             print(f"Group {group_name}: {map_model_status(group_status)}")
@@ -183,6 +186,7 @@ def print_solution(solver_manager: SolverManager):
                 solution_table_rows(
                     workers=solver_manager.workers,
                     workers_dict=solver_manager.workers_dict,
+                    workers_id_to_name=solver_manager.workers_id_to_name,
                     dates=solver_manager.dates,
                     shifts=solver_manager.shifts,
                     work_days=work_days,
@@ -261,22 +265,32 @@ def setup_workers_for_shift_scheduling(config: RunnableConfig) -> str:
         json_dict = json.load(f)
 
     sorted_items = sorted(json_dict.items(), key=lambda kv: kv[1]["group"])
-    workers_dict = dict(sorted_items)
 
-    workers = list(workers_dict.keys())
+    # workers_dict 是 dict[員工id, Worker], 用於後面使用員工id查詢員工資料
+    workers_dict: dict[str, Worker] = {
+        v["id"]: Worker.model_validate(v) for k, v in dict(sorted_items).items()
+    }
+
+    # workers 是 list[員工id]
+    workers: list[str] = list(workers_dict.keys())
+    for i in range(len(workers)):
+        workers_dict[workers[i]].workers_idx = i
+
+    # all_workers 是 range(len(workers)), 方便用於後面enumerate
     all_workers = range(len(workers))
 
-    for i in range(len(workers)):
-        workers_dict[workers[i]]["workers_idx"] = i
+    # group_workers 是 dict[Group, list[int]], 用於後面查詢工作群組的員工
+    group_workers: dict[Group, list[int]] = {}
+    for _, v in workers_dict.items():
+        if v.group not in group_workers:
+            group_workers[v.group] = []
 
-    group_workers = {}
-    for kv in workers_dict.items():
-        if kv[1]["group"] not in group_workers:
-            group_workers[kv[1]["group"]] = []
+        group_workers[v.group].append(v.workers_idx)
 
-        group_workers[kv[1]["group"]].append(kv[1]["workers_idx"])
-
-    group_workers_idx = {}
+    # group_workers_idx 是 dict[Group, dict[int, int]], 用於後面反查詢工作群組內員工的順序
+    # example: group_workers_idx[Group.出餐_廚房][17] = 0, group_workers_idx[Group.出餐_廚房][20] = 3
+    # 員工17號是本群組第0個員工, 員工20號是本群組第3個員工
+    group_workers_idx: dict[Group, dict[int, int]] = {}
     for group_name, workers_in_group in group_workers.items():
         group_workers_idx[group_name] = {w: i for i, w in enumerate(workers_in_group)}
 
@@ -308,23 +322,27 @@ def setup_shifts_for_shift_scheduling() -> str:
     with open(Path("local_data/shifts_MAY.json"), "r", encoding="utf-8") as f:
         json_dict = json.load(f)
 
-    shifts = copy.deepcopy(json_dict)
+    shifts_json = copy.deepcopy(json_dict)
+
+    # shifts 是 list[班次id, Shift]
+    shifts: list[Shift] = [Shift.model_validate(v) for v in shifts_json]
+
     all_shifts = range(len(shifts))
     shifts_start_ends = [
         (
-            time_str_to_time(shift["shift_start_time"], "start"),
-            time_str_to_time(shift["shift_end_time"], "end"),
+            shift.shift_start_time,
+            shift.shift_end_time,
         )
         for shift in shifts
     ]
 
-    shifts_idx = {s["name"]: i for i, s in enumerate(shifts)}
+    # shifts_idx = {s.id: i for i, s in enumerate(shifts)}
 
     set_shifts_msg = solver_manager.set_shifts(
         shifts=shifts,
         all_shifts=all_shifts,
         shifts_start_ends=shifts_start_ends,
-        shifts_idx=shifts_idx,
+        # shifts_idx=shifts_idx,
     )
 
     return set_shifts_msg

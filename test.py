@@ -1,5 +1,9 @@
 from langchain_core.messages import SystemMessage, AIMessage, ToolMessage, HumanMessage
 from agent.implementation import compiled_agent
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 if __name__ == "__main__":
@@ -12,7 +16,7 @@ if __name__ == "__main__":
 
     for chunk in compiled_agent.stream(
         {
-            "messages": [HumanMessage(content="排六月的班表")],
+            "messages": [HumanMessage(content="排六月的前28天班表")],
         },
         config=config,
         stream_mode="values",
