@@ -4,6 +4,10 @@ from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from typing import Literal
 from langchain_core.messages import SystemMessage, HumanMessage
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class Review(BaseModel):
