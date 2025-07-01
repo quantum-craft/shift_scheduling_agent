@@ -548,5 +548,3 @@ shift_scheduling_tool_list = [
     add_worker_day_off_requests_optimization,
     execute_ortools_scheduling_group_solvers,
 ]
-
-
